@@ -16,10 +16,16 @@ token_path = os.environ.get(
 output_dir = os.environ.get("TRACE_OUTPUT_DIR", "traces")
 os.makedirs(output_dir, exist_ok=True)
 
-url = "https://expressif.cea.fr:5100/api/sync/process?rulebase=tip.rules&querier=trace"
-
 parser = argparse.ArgumentParser(
     description="Send trace request with food/service scores (0-10)."
+)
+parser.add_argument(
+    "-r", "--rules", default="tip.rules",
+    help="Rulebase filename to use. Default: tip.rules"
+)
+parser.add_argument(
+    "-p", "--port", type=int, default=5095,
+    help="API port. Default: 5095"
 )
 parser.add_argument(
     "-f", "--food", type=int, choices=range(0, 11), default=8,
@@ -30,6 +36,11 @@ parser.add_argument(
     help="Service score (0-10). Default: 7"
 )
 args = parser.parse_args()
+
+url = (
+    f"https://expressif.cea.fr:{args.port}/api/sync/process"
+    f"?rulebase={args.rules}&querier=trace"
+)
 
 food_score = args.food
 service_score = args.service
@@ -74,8 +85,12 @@ except json.JSONDecodeError:
 
 # --- Save JSON ---------------------------------------------------------------
 
+rule_folder = os.path.splitext(os.path.basename(args.rules))[0]
+rule_output_dir = os.path.join(output_dir, rule_folder)
+os.makedirs(rule_output_dir, exist_ok=True)
+
 output_name = f"tip_trace_food{food_score}_service{service_score}.json"
-output_path = os.path.join(output_dir, output_name)
+output_path = os.path.join(rule_output_dir, output_name)
 
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
