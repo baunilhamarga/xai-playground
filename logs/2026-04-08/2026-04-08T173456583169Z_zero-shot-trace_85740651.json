@@ -1,0 +1,156 @@
+{
+  "backend": {
+    "api_key_env": "GROQ_API_KEY",
+    "api_key_logged": false,
+    "base_url": "https://api.groq.com/openai/v1",
+    "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+    "name": "groq"
+  },
+  "cli": {
+    "argv": [
+      "/home/baunilha/Repositories/xai-playground/xai_experiments/__main__.py",
+      "--mode",
+      "zero-shot+trace"
+    ],
+    "parameters": {
+      "allow_missing_api_key": false,
+      "api_key_env": null,
+      "backend": "groq",
+      "base_url": null,
+      "dry_run": false,
+      "examples_file": null,
+      "food": 2,
+      "instructions_file": null,
+      "logs_dir": "logs",
+      "max_tokens": 600,
+      "mode": "zero-shot+trace",
+      "model": "llama-3.1-8b-instant",
+      "rulebase_file": null,
+      "service": 7,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0,
+      "trace_model": "heitor2",
+      "trace_path": null,
+      "traces_dir": "traces"
+    }
+  },
+  "examples": {
+    "count": 0,
+    "source": null
+  },
+  "experiment_id": "85740651-f4f9-4701-a62c-8e2a6212e55f",
+  "framework_version": "0.1.0",
+  "generation_parameters": {
+    "max_tokens": 600,
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p": 1.0
+  },
+  "metrics": {
+    "example_count": 0,
+    "generation_time_seconds": 0.816034914998454,
+    "output_char_count": 1207,
+    "output_word_count": 218,
+    "prompt_char_count": 2118,
+    "prompt_message_count": 2,
+    "rulebase_rule_count": 0,
+    "trace_char_count": 633,
+    "usage": {
+      "completion_time": 0.517020528,
+      "completion_tokens": 292,
+      "prompt_time": 0.073065403,
+      "prompt_tokens": 557,
+      "queue_time": 0.045068668,
+      "total_time": 0.590085931,
+      "total_tokens": 849
+    }
+  },
+  "mode": "zero-shot+trace",
+  "mode_description": "Instructions plus the selected execution trace.",
+  "output": {
+    "metrics": {
+      "char_count": 1207,
+      "line_count": 10,
+      "word_count": 218
+    },
+    "response_metadata": {
+      "choice_index": 0,
+      "created": 1775669739,
+      "finish_reason": "stop",
+      "id": "chatcmpl-c161b21f-48eb-4698-b197-2ecc77d744dc",
+      "model": "llama-3.1-8b-instant",
+      "usage": {
+        "completion_time": 0.517020528,
+        "completion_tokens": 292,
+        "prompt_time": 0.073065403,
+        "prompt_tokens": 557,
+        "queue_time": 0.045068668,
+        "total_time": 0.590085931,
+        "total_tokens": 849
+      }
+    },
+    "text": "**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm reached this value by considering four linguistic rules that describe the relationship between the service, food, and tip. Here's how each rule contributed to the final decision:\n\n* If the service is excellent, the tip should be generous. In this case, the service score of 7 out of 10 is considered excellent, so this rule has a moderate impact (Activation Value: 0.5).\n* If the service is poor or the food is rancid, the tip should be cheap. However, the service score is 7, not poor, and the food score is 2, not rancid, so this rule has no impact (Activation Value: 0).\n* If the service is good and the food is delicious, the tip should be generous. In this case, the service score is 7, which is good, but the food score is only 2, not delicious, so this rule has no impact (Activation Value: 0).\n* If the service is good and the food is okay, the tip should be average. However, the food score is only 2, not okay, so this rule has no impact (Activation Value: 0).\n\nThe final tip recommendation of 2.5% is a result of the moderate impact of the first rule, which suggests a generous tip for excellent service."
+  },
+  "prompt": {
+    "char_count": 2118,
+    "instructions_sha256": "7799bd1bb86ec4336c90ab01e9c5ce0b5fdece655f4ad34b21d7c3ca04f33ed1",
+    "instructions_source": "builtin",
+    "message_count": 2,
+    "messages": [
+      {
+        "content": "**Role**\nYou are **Fuzzy Explainer**, an assistant whose task is to convert an execution trace from a fuzzy-logic inference system into a clear explanation for a non-specialist reader.\n\n**Input Provided**\nThe trace always follows this structure:\n\n<=== INPUT ===>\n[variable, value] ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n<=== OUTPUT ===>\n(variable_out, defuzzified_value) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n<=== EXPLANATION ===>\n(rule-description 1, Activation Value: X) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n(rule-description 2, Activation Value: Y) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n\nSome experiments may also include this optional context before the trace:\n\n<=== MODEL RULEBASE ===>\n1. rule-description\n2. rule-description\n...\n\nAll necessary data are contained in the trace and optional rulebase context; do **NOT** invent information.\n\n**Goal - Produce an English explanation containing:**\n1. **Summary** (1 sentence) - the main conclusion, e.g. \"The system recommends a 10 % tip.\"\n2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each linguistic rule to its activation value.\n\n**Style Constraints**\n- Clear, educational English; avoid unnecessary mathematical jargon.\n- Round all numeric values to two decimal places.\n- Use bullet points where they improve readability.\n- Total length <= 300 words.",
+        "role": "system"
+      },
+      {
+        "content": "Trace to explain:\n\n<=== INPUT ===>\n[food, 2] ; Definition Domain : [0 ; 10]\n[service, 7] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(if service is excellent then tip is generous, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(if (service is poor) or (food is rancid) then tip is cheap, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(if (service is good) and (food is delicious) then tip is generous, Activation Value: 0) ; Definition Domain : [0 ; 1]\n(if (service is good) and (food is okay) then tip is average, Activation Value: 0) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      }
+    ]
+  },
+  "rulebase": {
+    "method": null,
+    "rule_count": 0,
+    "source": null
+  },
+  "runtime": {
+    "cwd": "/home/baunilha/Repositories/xai-playground",
+    "git": {
+      "branch": "main",
+      "commit": "a36602bb80a79b7eaee61d81461ed9b76ffab858",
+      "status_short": "M README.md\n M gen_all_traces.sh\n M trace_request.py\n?? .codex\n?? logs/\n?? plot_membership.ipynb\n?? run_experiment.py\n?? test_groq_api.py\n?? trace_preprocessor.py\n?? xai_experiments/"
+    },
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]"
+  },
+  "schema_version": "xai-tip-explanation-run/v1",
+  "status": "success",
+  "timestamp_utc": "2026-04-08T17:34:56.583169+00:00",
+  "trace": {
+    "formatted_char_count": 633,
+    "formatted_sha256": "b49299ec5aa07dadf8b855a7351c411304813d80d8e4149bc279fa8fa272955a",
+    "path": "traces/heitor2/tip_trace_food2_service7.json",
+    "path_convention": "traces/<model_name>/tip_trace_food<foodScore>_service<serviceScore>.json",
+    "path_metadata": {
+      "food_score": 2,
+      "model_name": "heitor2",
+      "service_score": 7
+    },
+    "sha256": "617c68448c15de061ea3906310d603b955f566bf06acdc04946b329576ff43df",
+    "summary": {
+      "active_rule_count": 2,
+      "inputs": {
+        "food": "2",
+        "service": "7"
+      },
+      "outputs": {
+        "tip": {
+          "confidence": "0.5",
+          "value": "2.5"
+        }
+      },
+      "rule_count": 4
+    }
+  }
+}

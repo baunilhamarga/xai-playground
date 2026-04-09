@@ -1,0 +1,163 @@
+{
+  "backend": {
+    "api_key_env": "GROQ_API_KEY",
+    "api_key_logged": false,
+    "base_url": "https://api.groq.com/openai/v1",
+    "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+    "name": "groq"
+  },
+  "cli": {
+    "argv": [
+      "/home/baunilha/Repositories/xai-playground/xai_experiments/__main__.py",
+      "--mode",
+      "zero-shot+trace",
+      "--trace-path",
+      "traces/heitor3/tip_trace_food0_service0.json"
+    ],
+    "parameters": {
+      "allow_missing_api_key": false,
+      "api_key_env": null,
+      "backend": "groq",
+      "base_url": null,
+      "dry_run": false,
+      "examples_file": null,
+      "food": 2,
+      "instructions_file": null,
+      "logs_dir": "logs",
+      "max_tokens": 600,
+      "mode": "zero-shot+trace",
+      "model": "llama-3.1-8b-instant",
+      "rulebase_file": null,
+      "service": 7,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0,
+      "trace_model": "heitor2",
+      "trace_path": "traces/heitor3/tip_trace_food0_service0.json",
+      "traces_dir": "traces"
+    }
+  },
+  "examples": {
+    "count": 0,
+    "source": null
+  },
+  "experiment_id": "acf533b5-79a5-405c-8196-705375c63486",
+  "framework_version": "0.1.0",
+  "generation_parameters": {
+    "max_tokens": 600,
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p": 1.0
+  },
+  "metrics": {
+    "active_proposition_count": 2,
+    "example_count": 0,
+    "generation_time_seconds": 0.6615424760093447,
+    "output_char_count": 990,
+    "output_word_count": 163,
+    "prompt_char_count": 1735,
+    "prompt_message_count": 2,
+    "rulebase_rule_count": 0,
+    "trace_char_count": 322,
+    "usage": {
+      "completion_time": 0.463052045,
+      "completion_tokens": 198,
+      "prompt_time": 0.063036215,
+      "prompt_tokens": 455,
+      "queue_time": 0.025358132,
+      "total_time": 0.52608826,
+      "total_tokens": 653
+    }
+  },
+  "mode": "zero-shot+trace",
+  "mode_description": "Instructions plus the selected execution trace.",
+  "output": {
+    "metrics": {
+      "char_count": 990,
+      "line_count": 9,
+      "word_count": 163
+    },
+    "response_metadata": {
+      "choice_index": 0,
+      "created": 1775672908,
+      "finish_reason": "stop",
+      "id": "chatcmpl-d9e3e736-c53c-445e-996c-8699c25e9863",
+      "model": "llama-3.1-8b-instant",
+      "usage": {
+        "completion_time": 0.463052045,
+        "completion_tokens": 198,
+        "prompt_time": 0.063036215,
+        "prompt_tokens": 455,
+        "queue_time": 0.025358132,
+        "total_time": 0.52608826,
+        "total_tokens": 653
+      }
+    },
+    "text": "**Summary:** The system recommends a 5% tip due to the poor food quality and service.\n\n**Plain-language reasoning:** The algorithm considered the input variables, food and service, to determine the recommended tip. Here's how it reached this conclusion:\n\n* The food was rated as rancid, which contributed significantly to the decision. This label had an activation value of 1, indicating that it was the primary factor in the system's reasoning.\n* The service was also rated as poor, which further supported the decision. This label also had an activation value of 1, emphasizing its importance in the system's calculation.\n* The combination of these two factors led the system to recommend a relatively low tip of 5%. This suggests that the overall dining experience was not satisfactory, and a smaller tip is more appropriate.\n\nNote that the system did not consider any other factors, such as the quality of the food or the level of service, as they were not activated in the explanation."
+  },
+  "prompt": {
+    "char_count": 1735,
+    "instructions_sha256": "60ba994bbacba51e0ed280aa7e93547773a6cbaa6d2d2f0e7a395dcceac91dfd",
+    "instructions_source": "builtin",
+    "message_count": 2,
+    "messages": [
+      {
+        "content": "**Role**\nYou are **Fuzzy Explainer**, an assistant whose task is to convert an execution trace from a fuzzy-logic inference system into a clear explanation for a non-specialist reader.\n\n**Input Provided**\nThe trace always follows this structure:\n\n<=== INPUT ===>\n[variable, value] ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n<=== OUTPUT ===>\n(variable_out, defuzzified_value) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n<=== EXPLANATION ===>\n(linguistic-label 1, Activation Value: X) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n(linguistic-label 2, Activation Value: Y) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n\nThe explanation section lists activated fuzzy labels for the input variables, not full if-then rules.\n\nAll necessary data are contained in the trace; do **NOT** invent information.\n\n**Goal - Produce an English explanation containing:**\n1. **Summary** (1 sentence) - the main conclusion, e.g. \"The system recommends a 10 % tip.\"\n2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each activated label to its activation value.\n\n**Style Constraints**\n- Clear, educational English; avoid unnecessary mathematical jargon.\n- Round all numeric values to two decimal places.\n- Use bullet points where they improve readability.\n- Total length <= 300 words.",
+        "role": "system"
+      },
+      {
+        "content": "Trace to explain:\n\n<=== INPUT ===>\n[food, 0] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is rancid, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      }
+    ]
+  },
+  "rulebase": {
+    "method": null,
+    "rule_count": 0,
+    "source": null
+  },
+  "runtime": {
+    "cwd": "/home/baunilha/Repositories/xai-playground",
+    "git": {
+      "branch": "main",
+      "commit": "a36602bb80a79b7eaee61d81461ed9b76ffab858",
+      "status_short": "M README.md\n M gen_all_traces.sh\n M trace_request.py\n?? .codex\n?? logs/\n?? plot_membership.ipynb\n?? run_experiment.py\n?? test_groq_api.py\n?? trace_preprocessor.py\n?? xai_experiments/"
+    },
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]"
+  },
+  "schema_version": "xai-tip-explanation-run/v1",
+  "status": "success",
+  "timestamp_utc": "2026-04-08T18:27:45.889597+00:00",
+  "trace": {
+    "format": "activated_labels",
+    "formatted_char_count": 322,
+    "formatted_sha256": "6e838d1491c94078f2f171d00968c1eff017740fff08db9890f7535d0c412ac1",
+    "path": "traces/heitor3/tip_trace_food0_service0.json",
+    "path_convention": "traces/<model_name>/tip_trace_food<foodScore>_service<serviceScore>.json",
+    "path_metadata": {
+      "food_score": 0,
+      "model_name": "heitor3",
+      "service_score": 0
+    },
+    "sha256": "4a927a24fd81b2190d47a0e1ff56b85cc4a3dd676724cfdd42b3cfd92670e22a",
+    "summary": {
+      "active_proposition_count": 2,
+      "active_rule_count": 1,
+      "inputs": {
+        "food": "0",
+        "service": "0"
+      },
+      "outputs": {
+        "tip": {
+          "confidence": "1",
+          "value": "5"
+        }
+      },
+      "proposition_count": 5,
+      "rule_count": 5
+    }
+  },
+  "trace_variant": "activated_labels"
+}
