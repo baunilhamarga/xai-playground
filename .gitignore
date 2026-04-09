@@ -1,6 +1,8 @@
 token.txt
 traces/
 xai/
+.codex
+.matplotlib
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
