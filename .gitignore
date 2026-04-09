@@ -3,6 +3,7 @@ traces/
 xai/
 .codex
 .matplotlib
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
