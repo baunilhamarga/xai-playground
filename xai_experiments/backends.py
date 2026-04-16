@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import json
 import os
+import re
 import time
 from typing import Any, Protocol
 from urllib.error import HTTPError, URLError
@@ -30,13 +31,18 @@ class GenerationParams:
     timeout_seconds: int = 120
 
     def request_body(self, messages: list[dict[str, str]]) -> dict[str, Any]:
-        return {
+        reasoning_model = uses_openai_reasoning_model(self.model)
+        body = {
             "model": self.model,
-            "messages": messages,
-            "temperature": self.temperature,
-            "top_p": self.top_p,
-            "max_tokens": self.max_tokens,
+            "messages": normalize_messages_for_model(self.model, messages),
         }
+        if reasoning_model:
+            body["max_completion_tokens"] = self.max_tokens
+        else:
+            body["temperature"] = self.temperature
+            body["top_p"] = self.top_p
+            body["max_tokens"] = self.max_tokens
+        return body
 
 
 @dataclass(frozen=True)
@@ -145,6 +151,27 @@ class OpenAICompatibleChatBackend:
             elapsed_seconds=elapsed,
             response_metadata=metadata,
         )
+
+
+def uses_openai_reasoning_model(model: str) -> bool:
+    return bool(re.match(r"^o\d", model))
+
+
+def normalize_messages_for_model(
+    model: str,
+    messages: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    if not uses_openai_reasoning_model(model):
+        return messages
+
+    normalized: list[dict[str, str]] = []
+    for message in messages:
+        role = str(message.get("role") or "")
+        if role == "system":
+            normalized.append({**message, "role": "developer"})
+        else:
+            normalized.append(message)
+    return normalized
 
 
 def _interesting_error_headers(exc: HTTPError) -> dict[str, str]:
