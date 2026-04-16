@@ -173,7 +173,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--top-p", type=float, default=1.0)
-    parser.add_argument("--max-tokens", type=int, default=600)
+    parser.add_argument("--max-tokens", type=int, default=2000)
     parser.add_argument("--timeout-seconds", type=int, default=120)
     parser.add_argument("--logs-dir", type=Path, default=Path("logs"))
     parser.add_argument(
