@@ -30,10 +30,10 @@ All necessary data are contained in the trace; do **NOT** invent information.
 
 **Goal - Produce an English explanation containing:**
 1. **Summary** (1 sentence) - the main conclusion, e.g. "The system recommends a 10 % tip."
-2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each activated label to its activation value.
+2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value without using technical fuzzy system jargon and metrics, like activation values.
 
 **Style Constraints**
-- Clear, educational English; avoid unnecessary mathematical jargon.
+- Clear, educational English for a non-expert user; avoid unnecessary mathematical jargon.
 - Round all numeric values to two decimal places.
 - Use bullet points where they improve readability.
 - Total length <= 300 words.
@@ -67,10 +67,10 @@ All necessary data are contained in the trace and model rulebase context; do **N
 
 **Goal - Produce an English explanation containing:**
 1. **Summary** (1 sentence) - the main conclusion, e.g. "The system recommends a 10 % tip."
-2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each activated label to its activation value and, when relevant, to the rulebase.
+2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value without using technical fuzzy system jargon and metrics, like activation values.
 
 **Style Constraints**
-- Clear, educational English; avoid unnecessary mathematical jargon.
+- Clear, educational English for a non-expert user; avoid unnecessary mathematical jargon.
 - Round all numeric values to two decimal places.
 - Use bullet points where they improve readability.
 - Total length <= 300 words.
