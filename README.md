@@ -57,6 +57,34 @@ variables:
 FOOD_MIN=0 FOOD_MAX=2 SERVICE_MIN=0 SERVICE_MAX=2 ./run_all_experiments.sh --dry-run
 ```
 
+Run a fixed 10-case representative subset for each mode:
+
+```bash
+./run_representative_experiments.sh
+```
+
+This script is intended for quicker comparison runs when the full grid is too
+large. It executes the same 10 preset food/service pairs for all three modes,
+for a total of 30 runs:
+
+- `(food=0, service=0)`
+- `(food=5, service=5)`
+- `(food=10, service=10)`
+- `(food=2, service=7)`
+- `(food=0, service=10)`
+- `(food=10, service=0)`
+- `(food=2, service=2)`
+- `(food=8, service=5)`
+- `(food=5, service=8)`
+- `(food=9, service=9)`
+
+Like the full-grid runner, it keeps the experiment defaults unless you forward
+extra CLI flags:
+
+```bash
+./run_representative_experiments.sh --backend openai-compatible --model gpt-4o
+```
+
 The same CLI is available through the top-level wrapper:
 
 ```bash
@@ -141,6 +169,34 @@ Each record includes:
 - Error details if the backend call fails.
 
 API key values are not written to logs.
+
+## Streamlit Visualization
+
+The repository includes a Streamlit app under `./streamlit_app` for browsing
+experiment logs, prompt inputs, explanation outputs, traces, rulebases, and
+available rulebase plots.
+
+Install the app dependency:
+
+```bash
+pip install -r streamlit_app/requirements.txt
+```
+
+Run the app from the repository root:
+
+```bash
+streamlit run streamlit_app/app.py
+```
+
+Alternative launch from inside the app directory:
+
+```bash
+cd streamlit_app
+streamlit run app.py
+```
+
+The app reads experiment data from `./logs` and, when available, loads
+rulebase descriptions and images from `./rulebases/<name>/plots`.
 
 ## Backend Swapping
 
