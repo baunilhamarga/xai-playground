@@ -21,6 +21,11 @@ from .backends import (
     build_backend,
 )
 from .experiment_logging import JSONExperimentLogger, output_metrics
+from .evaluation import (
+    EvaluationParams,
+    append_evaluation_to_log,
+    run_trace_coverage_faithfulness_evaluation,
+)
 from .prompts import (
     DEFAULT_3SHOT_EXAMPLES,
     EXPERIMENT_MODES,
@@ -49,6 +54,9 @@ from .trace_loader import (
     summarize_trace,
 )
 
+EXIT_CODE_MISSING_API_KEY = 2
+MISSING_API_KEY_ERROR_FRAGMENT = "requires an API key in "
+
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
@@ -70,6 +78,11 @@ def main(argv: list[str] | None = None) -> int:
 
         if result.get("log_path"):
             log_paths.append(Path(str(result["log_path"])))
+        if result.get("fatal_exit_code"):
+            if not args.dry_run:
+                for path in log_paths:
+                    print(f"Logged experiment: {path}")
+            return int(result["fatal_exit_code"])
         if result.get("status") != "success":
             exit_code = 1
 
@@ -176,6 +189,62 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-tokens", type=int, default=2000)
     parser.add_argument("--timeout-seconds", type=int, default=120)
     parser.add_argument("--logs-dir", type=Path, default=Path("logs"))
+    parser.add_argument(
+        "--skip-faithfulness-eval",
+        action="store_true",
+        help="Skip the LLM-as-judge faithfulness evaluation stage.",
+    )
+    parser.add_argument(
+        "--eval-backend",
+        choices=["groq", "openai-compatible"],
+        default=None,
+        help="Optional backend override for the faithfulness judge. Defaults to the main backend.",
+    )
+    parser.add_argument(
+        "--eval-base-url",
+        default=None,
+        help="Optional base URL override for the faithfulness judge.",
+    )
+    parser.add_argument(
+        "--eval-api-key-env",
+        default=None,
+        help="Optional API key environment variable override for the faithfulness judge.",
+    )
+    parser.add_argument(
+        "--eval-model",
+        default=None,
+        help="Optional model override for the faithfulness judge. Defaults to the main model.",
+    )
+    parser.add_argument(
+        "--eval-temperature",
+        type=float,
+        default=None,
+        help="Optional temperature override for the faithfulness judge. Defaults to the main temperature.",
+    )
+    parser.add_argument(
+        "--eval-top-p",
+        type=float,
+        default=None,
+        help="Optional top-p override for the faithfulness judge. Defaults to the main top-p.",
+    )
+    parser.add_argument(
+        "--eval-question-max-tokens",
+        type=int,
+        default=500,
+        help="Max completion tokens for question generation during faithfulness evaluation.",
+    )
+    parser.add_argument(
+        "--eval-answer-max-tokens",
+        type=int,
+        default=200,
+        help="Max completion tokens for each yes/no faithfulness judgment.",
+    )
+    parser.add_argument(
+        "--eval-timeout-seconds",
+        type=int,
+        default=None,
+        help="Optional timeout override for the faithfulness judge. Defaults to the main timeout.",
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -356,8 +425,22 @@ def run_single_experiment(args: argparse.Namespace, mode_name: str) -> dict[str,
             "traceback": traceback.format_exc(),
         }
 
+    evaluation: dict[str, Any] | None = None
+    if not args.skip_faithfulness_eval:
+        evaluation = run_record_evaluation(
+            args=args,
+            record=record,
+            trace_text=trace_text,
+            explanation_text=str(((record.get("output") or {}).get("text")) or ""),
+        )
+        append_evaluation_to_log(record, evaluation)
+
     log_path = JSONExperimentLogger(args.logs_dir).log(record)
-    return {"status": record["status"], "log_path": log_path}
+    return {
+        "status": record["status"],
+        "log_path": log_path,
+        "fatal_exit_code": fatal_exit_code_for_record(record, evaluation),
+    }
 
 
 def load_examples(path: Path | None) -> list[PromptExample]:
@@ -396,6 +479,94 @@ def _serializable_args(args: argparse.Namespace) -> dict[str, Any]:
     for key, value in vars(args).items():
         result[key] = str(value) if isinstance(value, Path) else value
     return result
+
+
+def run_record_evaluation(
+    args: argparse.Namespace,
+    record: dict[str, Any],
+    trace_text: str,
+    explanation_text: str,
+) -> dict[str, Any]:
+    if record.get("status") != "success":
+        return {
+            "status": "skipped",
+            "skip_reason": "experiment_not_successful",
+        }
+
+    eval_backend = build_backend(
+        backend_name=args.eval_backend or args.backend,
+        base_url=args.eval_base_url or args.base_url,
+        api_key_env=args.eval_api_key_env or args.api_key_env,
+        allow_missing_api_key=args.allow_missing_api_key,
+    )
+    eval_params = EvaluationParams(
+        model=args.eval_model or args.model,
+        temperature=(
+            args.eval_temperature
+            if args.eval_temperature is not None
+            else args.temperature
+        ),
+        top_p=args.eval_top_p if args.eval_top_p is not None else args.top_p,
+        question_max_tokens=args.eval_question_max_tokens,
+        answer_max_tokens=args.eval_answer_max_tokens,
+        timeout_seconds=(
+            args.eval_timeout_seconds
+            if args.eval_timeout_seconds is not None
+            else args.timeout_seconds
+        ),
+    )
+    backend_metadata = {
+        "name": eval_backend.name,
+        "base_url": eval_backend.base_url,
+        "chat_completions_url": eval_backend.chat_completions_url,
+        "api_key_env": eval_backend.api_key_env,
+        "api_key_logged": False,
+    }
+
+    try:
+        return run_trace_coverage_faithfulness_evaluation(
+            trace_text=trace_text,
+            explanation_text=explanation_text,
+            backend=eval_backend,
+            backend_metadata=backend_metadata,
+            params=eval_params,
+        )
+    except Exception as exc:
+        return {
+            "status": "error",
+            "backend": backend_metadata,
+            "generation_parameters": {
+                "model": eval_params.model,
+                "temperature": eval_params.temperature,
+                "top_p": eval_params.top_p,
+                "question_max_tokens": eval_params.question_max_tokens,
+                "answer_max_tokens": eval_params.answer_max_tokens,
+                "timeout_seconds": eval_params.timeout_seconds,
+            },
+            "error": {
+                "type": type(exc).__name__,
+                "message": str(exc),
+                "traceback": traceback.format_exc(),
+            },
+        }
+
+
+def fatal_exit_code_for_record(
+    record: dict[str, Any],
+    evaluation: dict[str, Any] | None,
+) -> int | None:
+    if error_requires_api_key(record.get("error")):
+        return EXIT_CODE_MISSING_API_KEY
+    if error_requires_api_key((evaluation or {}).get("error")):
+        return EXIT_CODE_MISSING_API_KEY
+    return None
+
+
+def error_requires_api_key(error: Any) -> bool:
+    if not isinstance(error, dict):
+        return False
+    message = str(error.get("message") or "")
+    return MISSING_API_KEY_ERROR_FRAGMENT in message
 
 
 if __name__ == "__main__":
