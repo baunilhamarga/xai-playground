@@ -1,47 +1,48 @@
 from __future__ import annotations
 
+from datetime import date, datetime
 from pathlib import Path
 
 import streamlit as st
 
 try:
-    from streamlit_app.data import (
-        LOGS_DIR,
-        ROOT_DIR,
-        ExperimentRecord,
-        extract_rulebase_name,
-        format_number,
-        format_percent,
-        format_score,
-        format_seconds,
-        format_timestamp,
-        llm_trace_input,
-        load_experiments,
-        load_full_trace,
-        load_rulebase_resources,
-        parse_trace_nodes,
-        prompt_messages,
-        select_main_parameters,
-    )
+    import streamlit_app.data as data_module
 except ModuleNotFoundError:
-    from data import (
-        LOGS_DIR,
-        ROOT_DIR,
-        ExperimentRecord,
-        extract_rulebase_name,
-        format_number,
-        format_percent,
-        format_score,
-        format_seconds,
-        format_timestamp,
-        llm_trace_input,
-        load_experiments,
-        load_full_trace,
-        load_rulebase_resources,
-        parse_trace_nodes,
-        prompt_messages,
-        select_main_parameters,
-    )
+    import data as data_module
+
+
+LOGS_DIR = data_module.LOGS_DIR
+ROOT_DIR = data_module.ROOT_DIR
+ExperimentRecord = data_module.ExperimentRecord
+MetricSummary = data_module.MetricSummary
+available_quality_metrics = data_module.available_quality_metrics
+extract_rulebase_name = data_module.extract_rulebase_name
+metric_label = data_module.metric_label
+metric_summary = data_module.metric_summary
+tcf_evaluation_label = data_module.tcf_evaluation_label
+tcf_evaluations = data_module.tcf_evaluations
+tcf_evaluation = getattr(
+    data_module,
+    "tcf_evaluation",
+    getattr(data_module, "faithfulness_evaluation"),
+)
+tcf_score = getattr(
+    data_module,
+    "tcf_score",
+    getattr(data_module, "faithfulness_score"),
+)
+format_number = data_module.format_number
+format_percent = data_module.format_percent
+format_score = data_module.format_score
+format_seconds = data_module.format_seconds
+format_timestamp = data_module.format_timestamp
+llm_trace_input = data_module.llm_trace_input
+load_experiments = data_module.load_experiments
+load_full_trace = data_module.load_full_trace
+load_rulebase_resources = data_module.load_rulebase_resources
+parse_trace_nodes = data_module.parse_trace_nodes
+prompt_messages = data_module.prompt_messages
+select_main_parameters = data_module.select_main_parameters
 
 
 st.set_page_config(
@@ -78,11 +79,28 @@ def main() -> None:
 
 def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | None:
     with st.sidebar:
-        st.header("Experiment Selection")
+        header_cols = st.columns([0.72, 0.28])
+        header_cols[0].header("Experiment Selection")
+        if header_cols[1].button("Refresh", key="refresh_sidebar_filters"):
+            st.rerun()
 
+        rulebase_names = {
+            record.path: (extract_rulebase_name(record) or "Unavailable")
+            for record in experiments
+        }
+        record_dates = {
+            record.path: parse_record_date(record)
+            for record in experiments
+        }
         mode_options = ["All"] + sorted({record.mode for record in experiments})
         status_options = ["All"] + sorted({record.status for record in experiments})
         model_options = ["All"] + sorted({record.model for record in experiments})
+        rulebase_options = ["All"] + sorted(set(rulebase_names.values()))
+        experiment_dates = [
+            parsed_date
+            for parsed_date in record_dates.values()
+            if parsed_date is not None
+        ]
         food_options = ["All"] + sorted(
             {format_score(record.food_score) for record in experiments if record.food_score is not None},
             key=lambda value: float(value),
@@ -95,9 +113,71 @@ def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | No
         mode_filter = st.selectbox("Mode", options=mode_options, index=0)
         status_filter = st.selectbox("Status", options=status_options, index=0)
         model_filter = st.selectbox("Model", options=model_options, index=0)
+        rulebase_filter = st.selectbox("Rulebase", options=rulebase_options, index=0)
+        from_date_filter = None
+        include_all_history = True
+        if experiment_dates:
+            min_date = min(experiment_dates)
+            max_date = max(experiment_dates)
+            date_cols = st.columns([0.72, 0.28])
+            include_all_history = date_cols[1].checkbox(
+                "All",
+                value=True,
+            )
+            from_date_filter = date_cols[0].date_input(
+                "From date",
+                value=min_date,
+                min_value=min_date,
+                max_value=max_date,
+                disabled=include_all_history,
+            )
+            if include_all_history:
+                from_date_filter = None
         score_cols = st.columns(2)
         food_filter = score_cols[0].selectbox("Food", options=food_options, index=0)
         service_filter = score_cols[1].selectbox("Service", options=service_options, index=0)
+
+        st.divider()
+        st.subheader("Quality Filters")
+        quality_metric_options = available_quality_metrics(experiments)
+        selected_metric = st.selectbox(
+            "Metric",
+            options=quality_metric_options,
+            index=0,
+            format_func=metric_label,
+        )
+        metric_summaries = {
+            record.path: metric_summary(record, selected_metric)
+            for record in experiments
+        }
+        metric_status_cols = st.columns(2)
+        metric_status_filter = metric_status_cols[0].selectbox(
+            "Metric status",
+            options=["All", "Has score", "Missing", "Skipped", "Error"],
+            index=0,
+        )
+
+        slider_min, slider_max = metric_score_bounds(metric_summaries.values())
+        quality_preset_options = ["All"]
+        if slider_min >= 0.0 and slider_max <= 1.0:
+            quality_preset_options.extend(["Good", "Mixed", "Bad"])
+        quality_preset = metric_status_cols[1].selectbox(
+            "Quality",
+            options=quality_preset_options,
+            index=0,
+        )
+        score_range = st.slider(
+            "Score range",
+            min_value=float(slider_min),
+            max_value=float(slider_max),
+            value=(float(slider_min), float(slider_max)),
+            step=0.01,
+        )
+        sort_by = st.selectbox(
+            "Sort by",
+            options=["Newest", "Highest score first", "Lowest score first"],
+            index=0,
+        )
 
         filtered = [
             record
@@ -105,19 +185,44 @@ def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | No
             if (mode_filter == "All" or record.mode == mode_filter)
             and (status_filter == "All" or record.status == status_filter)
             and (model_filter == "All" or record.model == model_filter)
+            and (rulebase_filter == "All" or rulebase_names[record.path] == rulebase_filter)
+            and (
+                from_date_filter is None
+                or (
+                    record_dates[record.path] is not None
+                    and record_dates[record.path] >= from_date_filter
+                )
+            )
             and (food_filter == "All" or format_score(record.food_score) == food_filter)
             and (service_filter == "All" or format_score(record.service_score) == service_filter)
+            and matches_metric_filters(
+                metric_summaries[record.path],
+                metric_status_filter=metric_status_filter,
+                quality_preset=quality_preset,
+                score_range=score_range,
+            )
         ]
+        filtered = sort_records(
+            filtered,
+            metric_summaries=metric_summaries,
+            sort_by=sort_by,
+        )
 
         if not filtered:
             return None
 
+        st.caption(f"{len(filtered)} experiments match the current filters.")
+        experiment_labels = {
+            str(record.path): build_experiment_option_label(
+                record,
+                metric_summaries[record.path],
+            )
+            for record in filtered
+        }
         selected_path = st.selectbox(
             "Experiment",
             options=[str(record.path) for record in filtered],
-            format_func=lambda value: next(
-                record.label for record in filtered if str(record.path) == value
-            ),
+            format_func=lambda value: experiment_labels[value],
         )
         selected = next(record for record in filtered if str(record.path) == selected_path)
 
@@ -273,6 +378,7 @@ def render_llm_output(record: ExperimentRecord) -> None:
             st.markdown(text)
         else:
             st.info("This successful experiment log does not contain output text.")
+        render_tcf_evaluation(record)
         response_metadata = output.get("response_metadata") or {}
         if response_metadata:
             with st.expander("Response metadata", expanded=False):
@@ -283,6 +389,74 @@ def render_llm_output(record: ExperimentRecord) -> None:
         if error:
             with st.expander("Error details", expanded=False):
                 st.json(error)
+
+
+def render_tcf_evaluation(record: ExperimentRecord) -> None:
+    evaluations = tcf_evaluations(record)
+    if not evaluations:
+        st.caption("TCF score: unavailable")
+        return
+
+    latest = evaluations[0]
+    status = str(latest.get("status") or "unknown")
+    score = tcf_score(record)
+    yes_count = latest.get("yes_count")
+    total_questions = latest.get("total_questions")
+
+    if status == "success" and score is not None:
+        st.caption(
+            f"TCF score: {score:.2f} ({format_number(yes_count)}/{format_number(total_questions)})"
+        )
+    elif status == "skipped":
+        st.caption(
+            f"TCF score: unavailable ({latest.get('skip_reason') or 'skipped'})"
+        )
+    elif status == "error":
+        st.caption("TCF score: evaluation error")
+    else:
+        st.caption(f"TCF score: {status}")
+
+    with st.expander("TCF evaluation details", expanded=False):
+        if len(evaluations) > 1:
+            selected_index = st.selectbox(
+                "Evaluation run",
+                options=list(range(len(evaluations))),
+                index=0,
+                format_func=lambda idx: tcf_evaluation_label(evaluations[idx], idx),
+                key=f"tcf_evaluation_select_{record.path.name}",
+            )
+            evaluation = evaluations[selected_index]
+        else:
+            evaluation = latest
+
+        status = str(evaluation.get("status") or "unknown")
+        if status == "success":
+            st.markdown("**Summary**")
+            st.json(
+                {
+                    "timestamp_utc": evaluation.get("timestamp_utc"),
+                    "score": evaluation.get("score"),
+                    "yes_count": evaluation.get("yes_count"),
+                    "total_questions": evaluation.get("total_questions"),
+                    "metric_name": evaluation.get("metric_name"),
+                    "metric_short_name": evaluation.get("metric_short_name"),
+                }
+            )
+            for index, result in enumerate(
+                ((evaluation.get("judge") or {}).get("results")) or [],
+                start=1,
+            ):
+                st.markdown(f"**{index}. {result.get('section')} | {result.get('line_id')}**")
+                st.write(f"Trace line: `{result.get('trace_line')}`")
+                st.write(f"Question: {result.get('question')}")
+                st.write(f"Answer: `{str(result.get('answer') or '').upper()}`")
+                reason = str(result.get("reason") or "").strip()
+                if reason:
+                    st.write(f"Reason: {reason}")
+        elif status == "error":
+            st.json(evaluation.get("error") or evaluation)
+        else:
+            st.json(evaluation)
 
 
 def render_rulebase_resources(
@@ -381,6 +555,117 @@ def render_output_list(items: list[dict]) -> None:
             line += f" | confidence `{confidence_text}`"
         lines.append(line)
     st.markdown("\n".join(lines))
+
+
+def build_experiment_option_label(record: ExperimentRecord, summary: MetricSummary) -> str:
+    metric_text = metric_badge_text(summary)
+    return f"{record.label} | {metric_text}"
+
+
+def matches_metric_filters(
+    summary: MetricSummary,
+    metric_status_filter: str,
+    quality_preset: str,
+    score_range: tuple[float, float],
+) -> bool:
+    if metric_status_filter == "Has score" and summary.status != "success":
+        return False
+    if metric_status_filter == "Missing" and summary.status != "missing":
+        return False
+    if metric_status_filter == "Skipped" and summary.status != "skipped":
+        return False
+    if metric_status_filter == "Error" and summary.status != "error":
+        return False
+
+    if summary.status != "success" or summary.score is None:
+        return quality_preset == "All"
+
+    low, high = score_range
+    if summary.score < low or summary.score > high:
+        return False
+
+    if quality_preset == "Good":
+        return summary.score >= 0.80
+    if quality_preset == "Mixed":
+        return 0.40 <= summary.score < 0.80
+    if quality_preset == "Bad":
+        return summary.score < 0.40
+    return True
+
+
+def sort_records(
+    records: list[ExperimentRecord],
+    metric_summaries: dict[Path, MetricSummary],
+    sort_by: str,
+) -> list[ExperimentRecord]:
+    if sort_by == "Highest score first":
+        scored = [
+            record
+            for record in records
+            if metric_summaries[record.path].status == "success"
+            and metric_summaries[record.path].score is not None
+        ]
+        scored_paths = {record.path for record in scored}
+        unscored = [record for record in records if record.path not in scored_paths]
+        scored = sorted(scored, key=lambda record: record.timestamp, reverse=True)
+        scored = sorted(
+            scored,
+            key=lambda record: metric_summaries[record.path].score or 0.0,
+            reverse=True,
+        )
+        unscored = sorted(unscored, key=lambda record: record.timestamp, reverse=True)
+        return scored + unscored
+    if sort_by == "Lowest score first":
+        scored = [
+            record
+            for record in records
+            if metric_summaries[record.path].status == "success"
+            and metric_summaries[record.path].score is not None
+        ]
+        scored_paths = {record.path for record in scored}
+        unscored = [record for record in records if record.path not in scored_paths]
+        scored = sorted(scored, key=lambda record: record.timestamp, reverse=True)
+        scored = sorted(
+            scored,
+            key=lambda record: metric_summaries[record.path].score or 0.0,
+        )
+        unscored = sorted(unscored, key=lambda record: record.timestamp, reverse=True)
+        return scored + unscored
+    return sorted(records, key=lambda record: record.timestamp, reverse=True)
+
+
+def metric_score_bounds(summaries: list[MetricSummary]) -> tuple[float, float]:
+    scores = [summary.score for summary in summaries if summary.score is not None]
+    if not scores:
+        return (0.0, 1.0)
+
+    minimum = min(scores)
+    maximum = max(scores)
+    if minimum >= 0.0 and maximum <= 1.0:
+        return (0.0, 1.0)
+    if minimum == maximum:
+        return (minimum, maximum + 1.0)
+    return (minimum, maximum)
+
+
+def metric_badge_text(summary: MetricSummary) -> str:
+    if summary.status == "success" and summary.score is not None:
+        return f"{summary.key}={summary.score:.2f}"
+    if summary.status == "error":
+        return f"{summary.key}=error"
+    if summary.status == "skipped":
+        return f"{summary.key}=skipped"
+    return f"{summary.key}=missing"
+
+
+def parse_record_date(record: ExperimentRecord) -> date | None:
+    timestamp = str(record.timestamp or "").strip()
+    if not timestamp:
+        return None
+    try:
+        return datetime.fromisoformat(timestamp.replace("Z", "+00:00")).date()
+    except ValueError:
+        return None
 
 
 if __name__ == "__main__":

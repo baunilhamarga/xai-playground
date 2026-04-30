@@ -34,6 +34,23 @@ class ExperimentRecord:
     label: str
 
 
+@dataclass(frozen=True)
+class MetricSummary:
+    key: str
+    label: str
+    status: str
+    score: float | None
+    timestamp: str | None
+    evaluation_count: int
+    evaluation: dict[str, Any]
+
+
+DEFAULT_QUALITY_METRIC = "TCF"
+BUILTIN_METRIC_ALIASES = {
+    "TCF": {"TCF", "trace_coverage_faithfulness", "faithfulness_score"},
+}
+
+
 def load_experiments(logs_dir: Path = LOGS_DIR) -> list[ExperimentRecord]:
     records: list[ExperimentRecord] = []
     for path in sorted(logs_dir.glob("*/*.json"), reverse=True):
@@ -151,6 +168,109 @@ def prompt_messages(record: ExperimentRecord) -> list[dict[str, str]]:
     prompt = record.data.get("prompt") or {}
     messages = prompt.get("messages") or []
     return [message for message in messages if isinstance(message, dict)]
+
+
+def evaluation_history(record: ExperimentRecord) -> list[dict[str, Any]]:
+    evaluations = record.data.get("evaluations")
+    if isinstance(evaluations, list):
+        result = [item for item in evaluations if isinstance(item, dict)]
+        if result:
+            return _sort_evaluations(result)
+
+    evaluation = record.data.get("evaluation") or {}
+    if isinstance(evaluation, dict) and evaluation:
+        return [evaluation]
+    return []
+
+
+def available_quality_metrics(records: list[ExperimentRecord]) -> list[str]:
+    metrics = {DEFAULT_QUALITY_METRIC}
+    for record in records:
+        for evaluation in evaluation_history(record):
+            metric_key = metric_key_from_evaluation(evaluation)
+            if metric_key:
+                metrics.add(metric_key)
+    return sorted(metrics, key=lambda item: (item != DEFAULT_QUALITY_METRIC, item))
+
+
+def metric_evaluations(record: ExperimentRecord, metric_key: str) -> list[dict[str, Any]]:
+    aliases = metric_aliases(metric_key)
+    return [
+        evaluation
+        for evaluation in evaluation_history(record)
+        if metric_key_from_evaluation(evaluation) in aliases
+        or str(evaluation.get("metric_name") or "") in aliases
+        or str(evaluation.get("metric_short_name") or "") in aliases
+    ]
+
+
+def metric_summary(record: ExperimentRecord, metric_key: str) -> MetricSummary:
+    evaluations = metric_evaluations(record, metric_key)
+    if not evaluations:
+        return MetricSummary(
+            key=metric_key,
+            label=metric_label(metric_key),
+            status="missing",
+            score=None,
+            timestamp=None,
+            evaluation_count=0,
+            evaluation={},
+        )
+
+    latest = evaluations[0]
+    raw_status = str(latest.get("status") or "unknown")
+    score = _to_float(latest.get("score")) if raw_status == "success" else None
+    if raw_status == "success" and score is not None:
+        status = "success"
+    elif raw_status == "error":
+        status = "error"
+    elif raw_status == "skipped":
+        status = "skipped"
+    else:
+        status = "missing"
+
+    return MetricSummary(
+        key=metric_key,
+        label=metric_label(metric_key),
+        status=status,
+        score=score,
+        timestamp=str(latest.get("timestamp_utc") or "") or None,
+        evaluation_count=len(evaluations),
+        evaluation=latest,
+    )
+
+
+def tcf_evaluations(record: ExperimentRecord) -> list[dict[str, Any]]:
+    return metric_evaluations(record, DEFAULT_QUALITY_METRIC)
+
+
+def tcf_evaluation(record: ExperimentRecord) -> dict[str, Any]:
+    evaluations = tcf_evaluations(record)
+    return evaluations[0] if evaluations else {}
+
+
+def tcf_score(record: ExperimentRecord) -> float | None:
+    evaluation = tcf_evaluation(record)
+    return _to_float(evaluation.get("score"))
+
+
+def faithfulness_evaluation(record: ExperimentRecord) -> dict[str, Any]:
+    return tcf_evaluation(record)
+
+
+def faithfulness_score(record: ExperimentRecord) -> float | None:
+    return tcf_score(record)
+
+
+def tcf_evaluation_label(evaluation: dict[str, Any], index: int) -> str:
+    timestamp = format_timestamp(str(evaluation.get("timestamp_utc") or ""))
+    status = str(evaluation.get("status") or "unknown")
+    model = str(((evaluation.get("generation_parameters") or {}).get("model")) or "unknown-model")
+    score = _to_float(evaluation.get("score"))
+    metric_key = metric_key_from_evaluation(evaluation) or DEFAULT_QUALITY_METRIC
+    score_text = "no-score" if score is None else f"{metric_key} {score:.2f}"
+    newest_suffix = " | newest" if index == 0 else ""
+    return f"{timestamp} | {status} | {model} | {score_text}{newest_suffix}"
 
 
 def llm_trace_input(record: ExperimentRecord) -> str | None:
@@ -315,6 +435,32 @@ def select_main_parameters(record: ExperimentRecord) -> dict[str, Any]:
     }
 
 
+def metric_key_from_evaluation(evaluation: dict[str, Any]) -> str | None:
+    metric_short_name = str(evaluation.get("metric_short_name") or "").strip()
+    metric_name = str(evaluation.get("metric_name") or "").strip()
+
+    if metric_short_name:
+        return metric_short_name
+    if metric_name:
+        for canonical_key, aliases in BUILTIN_METRIC_ALIASES.items():
+            if metric_name in aliases:
+                return canonical_key
+        return metric_name
+    return None
+
+
+def metric_aliases(metric_key: str) -> set[str]:
+    aliases = set(BUILTIN_METRIC_ALIASES.get(metric_key, set()))
+    aliases.add(metric_key)
+    return aliases
+
+
+def metric_label(metric_key: str) -> str:
+    if metric_key == DEFAULT_QUALITY_METRIC:
+        return "Trace Coverage Faithfulness (TCF)"
+    return metric_key
+
+
 def _read_json(path: Path) -> Any:
     try:
         with path.open("r", encoding="utf-8") as handle:
@@ -356,3 +502,11 @@ def _basename(value: Any) -> str | None:
 
 def _string_value(value: Any) -> str:
     return "" if value is None else str(value)
+
+
+def _sort_evaluations(evaluations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return sorted(
+        evaluations,
+        key=lambda item: str(item.get("timestamp_utc") or ""),
+        reverse=True,
+    )
