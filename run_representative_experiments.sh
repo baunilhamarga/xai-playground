@@ -13,6 +13,8 @@ else
     python_bin="python3"
 fi
 
+missing_api_key_exit_code=2
+
 modes=(
     "zero-shot+trace"
     "3-shot+trace"
@@ -46,10 +48,18 @@ for case_entry in "${cases[@]}"; do
         printf '[%d/%d] case=%s mode=%s food=%s service=%s\n' \
             "$run_index" "$total_runs" "$label" "$mode" "$food" "$service"
 
-        if ! "$python_bin" -m xai_experiments "$@" \
+        "$python_bin" -m xai_experiments "$@" \
             --mode "$mode" \
             --food "$food" \
-            --service "$service"; then
+            --service "$service"
+        status=$?
+
+        if (( status != 0 )); then
+            if (( status == missing_api_key_exit_code )); then
+                printf 'Aborting batch: missing required API key for case=%s mode=%s food=%s service=%s.\n' \
+                    "$label" "$mode" "$food" "$service" >&2
+                exit "$status"
+            fi
             failure_count=$((failure_count + 1))
             printf '  failed: case=%s mode=%s food=%s service=%s\n' \
                 "$label" "$mode" "$food" "$service" >&2

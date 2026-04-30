@@ -13,6 +13,8 @@ else
     python_bin="python3"
 fi
 
+missing_api_key_exit_code=2
+
 FOOD_MIN="${FOOD_MIN:-0}"
 FOOD_MAX="${FOOD_MAX:-10}"
 SERVICE_MIN="${SERVICE_MIN:-0}"
@@ -38,10 +40,18 @@ for food in $(seq "$FOOD_MIN" "$FOOD_MAX"); do
             printf '[%d/%d] mode=%s food=%s service=%s\n' \
                 "$run_index" "$total_runs" "$mode" "$food" "$service"
 
-            if ! "$python_bin" -m xai_experiments "$@" \
+            "$python_bin" -m xai_experiments "$@" \
                 --mode "$mode" \
                 --food "$food" \
-                --service "$service"; then
+                --service "$service"
+            status=$?
+
+            if (( status != 0 )); then
+                if (( status == missing_api_key_exit_code )); then
+                    printf 'Aborting batch: missing required API key for mode=%s food=%s service=%s.\n' \
+                        "$mode" "$food" "$service" >&2
+                    exit "$status"
+                fi
                 failure_count=$((failure_count + 1))
                 printf '  failed: mode=%s food=%s service=%s\n' \
                     "$mode" "$food" "$service" >&2
