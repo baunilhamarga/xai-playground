@@ -135,6 +135,22 @@ Use `--dry-run` to print the assembled messages without calling an LLM or writin
 python3 -m xai_experiments --mode all --dry-run
 ```
 
+Use `--smoke-run` to call the backend and run the pipeline in memory without
+writing any experiment log:
+
+```bash
+python3 -m xai_experiments --mode zero-shot+trace --smoke-run
+```
+
+This is the simplest way to verify that API keys, backend connectivity, trace
+loading, prompt assembly, and optional evaluation are working, without creating
+JSON log files under `./logs`. To test only the main generation call and skip
+the evaluation stage, add:
+
+```bash
+python3 -m xai_experiments --mode zero-shot+trace --smoke-run --skip-faithfulness-eval
+```
+
 ## Trace Coverage Faithfulness (TCF)
 
 Each successful experiment now runs an LLM-as-judge Trace Coverage Faithfulness

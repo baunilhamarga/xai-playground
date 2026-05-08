@@ -88,6 +88,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.dry_run:
         return 0
+    if args.smoke_run:
+        return exit_code
 
     for path in log_paths:
         print(f"Logged experiment: {path}")
@@ -250,7 +252,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Print the assembled messages as JSON and skip backend calls and logging.",
     )
-    return parser.parse_args(argv)
+    parser.add_argument(
+        "--smoke-run",
+        action="store_true",
+        help=(
+            "Run the pipeline in memory, including backend calls, but do not write "
+            "experiment logs. Useful for API-key and connectivity checks."
+        ),
+    )
+    args = parser.parse_args(argv)
+    if args.dry_run and args.smoke_run:
+        parser.error("--dry-run and --smoke-run cannot be used together.")
+    return args
 
 
 def run_single_experiment(args: argparse.Namespace, mode_name: str) -> dict[str, Any]:
@@ -435,7 +448,11 @@ def run_single_experiment(args: argparse.Namespace, mode_name: str) -> dict[str,
         )
         append_evaluation_to_log(record, evaluation)
 
-    log_path = JSONExperimentLogger(args.logs_dir).log(record)
+    if args.smoke_run:
+        print_smoke_run_summary(mode.name, record)
+        log_path = None
+    else:
+        log_path = JSONExperimentLogger(args.logs_dir).log(record)
     return {
         "status": record["status"],
         "log_path": log_path,
@@ -567,6 +584,36 @@ def error_requires_api_key(error: Any) -> bool:
         return False
     message = str(error.get("message") or "")
     return MISSING_API_KEY_ERROR_FRAGMENT in message
+
+
+def print_smoke_run_summary(mode_name: str, record: dict[str, Any]) -> None:
+    output = record.get("output") or {}
+    output_text = str(output.get("text") or "")
+    evaluation = record.get("evaluation") or {}
+    evaluation_status = str(evaluation.get("status") or "not_run")
+    evaluation_score = evaluation.get("score")
+
+    print(
+        f"Smoke run | mode={mode_name} | status={record.get('status')} | "
+        f"output_chars={len(output_text)} | eval_status={evaluation_status}",
+    )
+    if evaluation_score is not None:
+        print(f"Smoke run | TCF={evaluation_score}")
+
+    if record.get("status") != "success":
+        error = record.get("error") or {}
+        print(
+            f"Smoke run | experiment_error={error.get('type')}: "
+            f"{error.get('message')}",
+            file=sys.stderr,
+        )
+    elif evaluation_status == "error":
+        error = evaluation.get("error") or {}
+        print(
+            f"Smoke run | evaluation_error={error.get('type')}: "
+            f"{error.get('message')}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":
