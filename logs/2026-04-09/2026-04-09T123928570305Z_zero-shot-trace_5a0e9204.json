@@ -1,0 +1,517 @@
+{
+  "backend": {
+    "api_key_env": "GROQ_API_KEY",
+    "api_key_logged": false,
+    "base_url": "https://api.groq.com/openai/v1",
+    "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+    "name": "groq"
+  },
+  "cli": {
+    "argv": [
+      "/home/baunilha/Repositories/xai-playground/xai_experiments/__main__.py",
+      "--mode",
+      "zero-shot+trace",
+      "--food",
+      "3",
+      "--service",
+      "3"
+    ],
+    "parameters": {
+      "allow_missing_api_key": false,
+      "api_key_env": null,
+      "backend": "groq",
+      "base_url": null,
+      "dry_run": false,
+      "examples_file": null,
+      "food": 3,
+      "instructions_file": null,
+      "logs_dir": "logs",
+      "max_tokens": 600,
+      "mode": "zero-shot+trace",
+      "model": "llama-3.1-8b-instant",
+      "rulebase_file": null,
+      "service": 3,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0,
+      "trace_model": "heitor2",
+      "trace_path": null,
+      "traces_dir": "traces"
+    }
+  },
+  "evaluation": {
+    "backend": {
+      "api_key_env": "GROQ_API_KEY",
+      "api_key_logged": false,
+      "base_url": "https://api.groq.com/openai/v1",
+      "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+      "name": "groq"
+    },
+    "framework_version": "0.1.0",
+    "generation_parameters": {
+      "answer_max_tokens": 200,
+      "model": "llama-3.1-8b-instant",
+      "question_max_tokens": 500,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0
+    },
+    "judge": {
+      "no_count": 0,
+      "results": [
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.15754749900042953,
+          "is_yes": true,
+          "line_id": "input_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_1 | INPUT):\n[food, 3] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs food okay?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is food okay?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation states 'The food was considered \"okay\", which contributed to the tip amount.'\"\n}",
+          "reason": "{ \"answer\": \"yes\", \"reason\": \"The explanation states 'The food was considered \"okay\", which contributed to the tip amount.'\" }",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337806,
+            "finish_reason": "stop",
+            "id": "chatcmpl-4de33a1e-751d-4f7d-ba9e-582fd5ce1de6",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.033742203,
+              "completion_tokens": 34,
+              "prompt_time": 0.043018087,
+              "prompt_tokens": 547,
+              "queue_time": 0.046152933,
+              "total_time": 0.07676029,
+              "total_tokens": 581
+            }
+          },
+          "section": "INPUT",
+          "trace_line": "[food, 3] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.14044511999964016,
+          "is_yes": true,
+          "line_id": "input_2",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_2 | INPUT):\n[service, 3] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs service good?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is service good?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation states 'The service was seen as both \"poor\" and \"good\"' which directly addresses the question of whether service is good.\"\n}",
+          "reason": "{ \"answer\": \"yes\", \"reason\": \"The explanation states 'The service was seen as both \"poor\" and \"good\"' which directly addresses the question of whether service is good.\" }",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337807,
+            "finish_reason": "stop",
+            "id": "chatcmpl-e8e7e886-7963-4bd2-a9ce-c2e24ff0e460",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.05823783,
+              "completion_tokens": 44,
+              "prompt_time": 0.030912727,
+              "prompt_tokens": 547,
+              "queue_time": 0.017776744,
+              "total_time": 0.089150557,
+              "total_tokens": 591
+            }
+          },
+          "section": "INPUT",
+          "trace_line": "[service, 3] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.27914928599966515,
+          "is_yes": true,
+          "line_id": "output_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (output_1 | OUTPUT):\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs the tip 2.5?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is the tip 2.5?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that the system recommends a 2.5% tip, which directly answers the question.\"\n}",
+          "reason": "The explanation clearly states that the system recommends a 2.5% tip, which directly answers the question.",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337807,
+            "finish_reason": "stop",
+            "id": "chatcmpl-7b939157-4d0b-4ef0-955f-f4051eb258c7",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.037154564,
+              "completion_tokens": 37,
+              "prompt_time": 0.068582754,
+              "prompt_tokens": 555,
+              "queue_time": 0.045298411,
+              "total_time": 0.105737318,
+              "total_tokens": 592
+            }
+          },
+          "section": "OUTPUT",
+          "trace_line": "(tip, 2.5) ; Definition Domain : [0 % ; 30 %]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.20439684300072258,
+          "is_yes": true,
+          "line_id": "explanation_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_1 | EXPLANATION):\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs food okay?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is food okay?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation states 'The food was considered \"okay\", which contributed to the tip amount.'\"\n}",
+          "reason": "{ \"answer\": \"yes\", \"reason\": \"The explanation states 'The food was considered \"okay\", which contributed to the tip amount.'\" }",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337807,
+            "finish_reason": "stop",
+            "id": "chatcmpl-2e72e230-6458-4d1c-a674-d9b2d9efe718",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.035381539,
+              "completion_tokens": 34,
+              "prompt_time": 0.033141754,
+              "prompt_tokens": 561,
+              "queue_time": 0.018868152,
+              "total_time": 0.068523293,
+              "total_tokens": 595
+            }
+          },
+          "section": "EXPLANATION",
+          "trace_line": "(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.31227579900041746,
+          "is_yes": true,
+          "line_id": "explanation_2",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_2 | EXPLANATION):\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs service poor?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is service poor?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states that 'The service was seen as both \"poor\" and \"good\", but the \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision.'\"\n}",
+          "reason": "{ \"answer\": \"yes\", \"reason\": \"The explanation explicitly states that 'The service was seen as both \"poor\" and \"good\", but the \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision.'\" }",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337807,
+            "finish_reason": "stop",
+            "id": "chatcmpl-9332424f-73ae-417d-819d-feec8e0e03ae",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.069550826,
+              "completion_tokens": 68,
+              "prompt_time": 0.086998874,
+              "prompt_tokens": 556,
+              "queue_time": 0.045845327,
+              "total_time": 0.1565497,
+              "total_tokens": 624
+            }
+          },
+          "section": "EXPLANATION",
+          "trace_line": "(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.21679499199854035,
+          "is_yes": true,
+          "line_id": "explanation_3",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_3 | EXPLANATION):\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service.\n\nQuestion:\nIs service good?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is service good?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation states 'The service was seen as both \"poor\" and \"good\", which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service.' and later 'The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.'\"\n}",
+          "reason": "{ \"answer\": \"yes\", \"reason\": \"The explanation states 'The service was seen as both \"poor\" and \"good\", which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service.' and later 'The \"good\" label had a lower activation value",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776337808,
+            "finish_reason": "stop",
+            "id": "chatcmpl-56f2fa12-8c87-4e62-827f-1761f4185b77",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.124243846,
+              "completion_tokens": 85,
+              "prompt_time": 0.040690253,
+              "prompt_tokens": 561,
+              "queue_time": 0.018662327,
+              "total_time": 0.164934099,
+              "total_tokens": 646
+            }
+          },
+          "section": "EXPLANATION",
+          "trace_line": "(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]"
+        }
+      ],
+      "status": "success",
+      "total_elapsed_seconds": 1.5510715729997173,
+      "yes_count": 6
+    },
+    "metric_name": "trace_coverage_faithfulness",
+    "metric_short_name": "TCF",
+    "question_generation": {
+      "elapsed_seconds": 0.24046203400030208,
+      "messages": [
+        {
+          "content": "You generate yes/no Trace Coverage Faithfulness (TCF) questions from reduced fuzzy execution traces. Return strict JSON only.",
+          "role": "system"
+        },
+        {
+          "content": "Reduced trace:\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nAtomic trace facts:\n- input_1 | INPUT | [food, 3] ; Definition Domain : [0 ; 10]\n- input_2 | INPUT | [service, 3] ; Definition Domain : [0 ; 10]\n- output_1 | OUTPUT | (tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n- explanation_1 | EXPLANATION | (food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n- explanation_2 | EXPLANATION | (service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n- explanation_3 | EXPLANATION | (service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n\nTask:\n- Create exactly one yes/no question for each listed trace fact.\n- Keep each question focused on the core information in that fact.\n- For INPUT and OUTPUT facts, ask about the variable value.\n- For EXPLANATION facts, ask about the linguistic label or condition.\n- Do not require the explanation to repeat activation values, domains, or formatting.\n- The question must be answerable by checking whether the explanation communicates that fact.\n\nReturn JSON with this shape:\n{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Does the explanation say ...?\"}\n  ]\n}\nUse every provided line_id exactly once and do not add extra fields.",
+          "role": "user"
+        }
+      ],
+      "normalized_questions_sha256": "7e6ca7714773cf9643224795ff63300ff762ebbaf52bd595bfd421b478ade3b2",
+      "question_count": 6,
+      "questions": [
+        {
+          "line_id": "input_1",
+          "question": "Is food okay?"
+        },
+        {
+          "line_id": "input_2",
+          "question": "Is service good?"
+        },
+        {
+          "line_id": "output_1",
+          "question": "Is the tip 2.5?"
+        },
+        {
+          "line_id": "explanation_1",
+          "question": "Is food okay?"
+        },
+        {
+          "line_id": "explanation_2",
+          "question": "Is service poor?"
+        },
+        {
+          "line_id": "explanation_3",
+          "question": "Is service good?"
+        }
+      ],
+      "response_metadata": {
+        "choice_index": 0,
+        "created": 1776337806,
+        "finish_reason": "stop",
+        "id": "chatcmpl-0c86b8e6-4f3e-4247-ae78-3dc0afdd78bb",
+        "model": "llama-3.1-8b-instant",
+        "usage": {
+          "completion_time": 0.130296826,
+          "completion_tokens": 131,
+          "prompt_time": 0.050516634,
+          "prompt_tokens": 529,
+          "queue_time": 0.01810907,
+          "total_time": 0.18081346,
+          "total_tokens": 660
+        }
+      },
+      "response_sha256": "2e8a6cb640ce564b3ebe1bd9dbe6d864b1726b4e6c9c298e55be830ff1693e07",
+      "response_text": "{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Is food okay?\"},\n    {\"line_id\": \"input_2\", \"question\": \"Is service good?\"},\n    {\"line_id\": \"output_1\", \"question\": \"Is the tip 2.5?\"},\n    {\"line_id\": \"explanation_1\", \"question\": \"Is food okay?\"},\n    {\"line_id\": \"explanation_2\", \"question\": \"Is service poor?\"},\n    {\"line_id\": \"explanation_3\", \"question\": \"Is service good?\"}\n  ]\n}",
+      "status": "success"
+    },
+    "score": 1.0,
+    "status": "success",
+    "timestamp_utc": "2026-04-16T11:10:06.583796+00:00",
+    "total_questions": 6,
+    "trace_fact_count": 6,
+    "trace_facts": [
+      {
+        "line_id": "input_1",
+        "section": "INPUT",
+        "text": "[food, 3] ; Definition Domain : [0 ; 10]"
+      },
+      {
+        "line_id": "input_2",
+        "section": "INPUT",
+        "text": "[service, 3] ; Definition Domain : [0 ; 10]"
+      },
+      {
+        "line_id": "output_1",
+        "section": "OUTPUT",
+        "text": "(tip, 2.5) ; Definition Domain : [0 % ; 30 %]"
+      },
+      {
+        "line_id": "explanation_1",
+        "section": "EXPLANATION",
+        "text": "(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]"
+      },
+      {
+        "line_id": "explanation_2",
+        "section": "EXPLANATION",
+        "text": "(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]"
+      },
+      {
+        "line_id": "explanation_3",
+        "section": "EXPLANATION",
+        "text": "(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]"
+      }
+    ],
+    "trace_sha256": "87c1c6a7a9a3ffb511c69dc54132f641b013fd23d06cd1dd2267008207779d18",
+    "yes_count": 6
+  },
+  "examples": {
+    "count": 0,
+    "source": null
+  },
+  "experiment_id": "5a0e9204-872e-4e96-a2f2-9f8f15b42d68",
+  "framework_version": "0.1.0",
+  "generation_parameters": {
+    "max_tokens": 600,
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p": 1.0
+  },
+  "metrics": {
+    "active_proposition_count": 3,
+    "example_count": 0,
+    "generation_time_seconds": 0.8706660520110745,
+    "output_char_count": 1101,
+    "output_word_count": 177,
+    "prompt_char_count": 1840,
+    "prompt_message_count": 2,
+    "rulebase_rule_count": 0,
+    "tcf_score": 1.0,
+    "tcf_total_questions": 6,
+    "tcf_yes_count": 6,
+    "trace_char_count": 427,
+    "usage": {
+      "completion_time": 0.52758902,
+      "completion_tokens": 231,
+      "prompt_time": 0.03217799,
+      "prompt_tokens": 491,
+      "queue_time": 0.044142713,
+      "total_time": 0.55976701,
+      "total_tokens": 722
+    }
+  },
+  "mode": "zero-shot+trace",
+  "mode_description": "Only a system prompt is used, including the simplified trace produced by the reduction method.",
+  "output": {
+    "metrics": {
+      "char_count": 1101,
+      "line_count": 7,
+      "word_count": 177
+    },
+    "response_metadata": {
+      "choice_index": 0,
+      "created": 1775738369,
+      "finish_reason": "stop",
+      "id": "chatcmpl-9c190d4d-14ae-47e5-b7b5-a6692fcba6a4",
+      "model": "llama-3.1-8b-instant",
+      "usage": {
+        "completion_time": 0.52758902,
+        "completion_tokens": 231,
+        "prompt_time": 0.03217799,
+        "prompt_tokens": 491,
+        "queue_time": 0.044142713,
+        "total_time": 0.55976701,
+        "total_tokens": 722
+      }
+    },
+    "text": "**Summary:** The system recommends a 2.5% tip.\n\n**Plain-language reasoning:** The algorithm considered the quality of the food and service to determine the tip amount. Here's how it reached this value:\n\n* The food was considered \"okay,\" which contributed to the tip amount. This label had an activation value of 0.33, indicating a moderate influence on the decision.\n* The service was seen as both \"poor\" and \"good,\" which might seem contradictory. However, the algorithm likely took these two labels into account to form a more nuanced view of the service. The \"poor\" label had a higher activation value of 0.50, suggesting that the service had a more significant negative impact on the decision. The \"good\" label had a lower activation value of 0.33, indicating a smaller positive influence.\n* The algorithm combined these influences to determine the tip amount, resulting in a 2.5% recommendation. This value likely reflects the balance between the moderate quality of the food and the mixed service, with the negative impact of the poor service outweighing the positive impact of the good service."
+  },
+  "prompt": {
+    "char_count": 1840,
+    "instructions_sha256": "60ba994bbacba51e0ed280aa7e93547773a6cbaa6d2d2f0e7a395dcceac91dfd",
+    "instructions_source": "builtin",
+    "message_count": 2,
+    "messages": [
+      {
+        "content": "**Role**\nYou are **Fuzzy Explainer**, an assistant whose task is to convert an execution trace from a fuzzy-logic inference system into a clear explanation for a non-specialist reader.\n\n**Input Provided**\nThe trace always follows this structure:\n\n<=== INPUT ===>\n[variable, value] ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n<=== OUTPUT ===>\n(variable_out, defuzzified_value) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n<=== EXPLANATION ===>\n(linguistic-label 1, Activation Value: X) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n(linguistic-label 2, Activation Value: Y) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n\nThe explanation section lists activated fuzzy labels for the input variables, not full if-then rules.\n\nAll necessary data are contained in the trace; do **NOT** invent information.\n\n**Goal - Produce an English explanation containing:**\n1. **Summary** (1 sentence) - the main conclusion, e.g. \"The system recommends a 10 % tip.\"\n2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each activated label to its activation value.\n\n**Style Constraints**\n- Clear, educational English; avoid unnecessary mathematical jargon.\n- Round all numeric values to two decimal places.\n- Use bullet points where they improve readability.\n- Total length <= 300 words.",
+        "role": "system"
+      },
+      {
+        "content": "Trace to explain:\n\n<=== INPUT ===>\n[food, 3] ; Definition Domain : [0 ; 10]\n[service, 3] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 2.5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 0.5) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 0.3333333333333333) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      }
+    ]
+  },
+  "rulebase": {
+    "method": null,
+    "rule_count": 0,
+    "source": null
+  },
+  "runtime": {
+    "cwd": "/home/baunilha/Repositories/xai-playground",
+    "git": {
+      "branch": "main",
+      "commit": "2b0f9826b810126b1dad368c433ffdf08f6ca640",
+      "status_short": ""
+    },
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]"
+  },
+  "schema_version": "xai-tip-explanation-run/v1",
+  "status": "success",
+  "timestamp_utc": "2026-04-09T12:39:28.570305+00:00",
+  "trace": {
+    "format": "activated_labels",
+    "formatted_char_count": 427,
+    "formatted_sha256": "87c1c6a7a9a3ffb511c69dc54132f641b013fd23d06cd1dd2267008207779d18",
+    "path": "traces/heitor2/tip_trace_food3_service3.json",
+    "path_convention": "traces/<model_name>/tip_trace_food<foodScore>_service<serviceScore>.json",
+    "path_metadata": {
+      "food_score": 3,
+      "model_name": "heitor2",
+      "service_score": 3
+    },
+    "sha256": "e8033752740005f36ec409d6ad0c496e326d1b23faa7ffe41665057a9e0c116f",
+    "summary": {
+      "active_proposition_count": 3,
+      "active_rule_count": 2,
+      "inputs": {
+        "food": "3",
+        "service": "3"
+      },
+      "outputs": {
+        "tip": {
+          "confidence": "0.5",
+          "value": "2.5"
+        }
+      },
+      "proposition_count": 6,
+      "rule_count": 4
+    }
+  },
+  "trace_variant": "activated_labels"
+}

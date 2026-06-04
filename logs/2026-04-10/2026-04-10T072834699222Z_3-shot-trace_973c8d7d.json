@@ -1,0 +1,1178 @@
+{
+  "backend": {
+    "api_key_env": "OPENAI_API_KEY",
+    "api_key_logged": false,
+    "base_url": "https://api.openai.com/v1",
+    "chat_completions_url": "https://api.openai.com/v1/chat/completions",
+    "name": "openai-compatible"
+  },
+  "cli": {
+    "argv": [
+      "/home/baunilha/Repositories/xai-playground/xai_experiments/__main__.py",
+      "--backend",
+      "openai-compatible",
+      "--model",
+      "o3",
+      "--mode",
+      "3-shot+trace",
+      "--food",
+      "10",
+      "--service",
+      "0"
+    ],
+    "parameters": {
+      "allow_missing_api_key": false,
+      "api_key_env": null,
+      "backend": "openai-compatible",
+      "base_url": null,
+      "dry_run": false,
+      "examples_file": null,
+      "food": 10,
+      "instructions_file": null,
+      "logs_dir": "logs",
+      "max_tokens": 2000,
+      "mode": "3-shot+trace",
+      "model": "o3",
+      "rulebase_file": null,
+      "service": 0,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0,
+      "trace_model": "heitor2",
+      "trace_path": null,
+      "traces_dir": "traces"
+    }
+  },
+  "evaluation": {
+    "backend": {
+      "api_key_env": "GROQ_API_KEY",
+      "api_key_logged": false,
+      "base_url": "https://api.groq.com/openai/v1",
+      "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+      "name": "groq"
+    },
+    "framework_version": "0.1.0",
+    "generation_parameters": {
+      "answer_max_tokens": 200,
+      "model": "llama-3.1-8b-instant",
+      "question_max_tokens": 500,
+      "temperature": 0.0,
+      "timeout_seconds": 120,
+      "top_p": 1.0
+    },
+    "judge": {
+      "no_count": 0,
+      "results": [
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.2046071539989498,
+          "is_yes": true,
+          "line_id": "input_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_1 | INPUT):\n[food, 10] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that 'food quality was classified as “delicious” with full strength (activation 1.00)', which implies that the food received a perfect score of 10 out of 10.\"\n}",
+          "reason": "The explanation clearly states that 'food quality was classified as “delicious” with full strength (activation 1.00)', which implies that the food received a perfect score of 10 out of 10.",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776340034,
+            "finish_reason": "stop",
+            "id": "chatcmpl-ea73db2c-db2d-4ec7-8068-dc35a63b1b72",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.071001625,
+              "completion_tokens": 57,
+              "prompt_time": 0.030320447,
+              "prompt_tokens": 527,
+              "queue_time": 0.019859525,
+              "total_time": 0.101322072,
+              "total_tokens": 584
+            }
+          },
+          "section": "INPUT",
+          "trace_line": "[food, 10] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.20946192199880898,
+          "is_yes": true,
+          "line_id": "input_2",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_2 | INPUT):\n[service, 0] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that the service was classified as 'poor' with full strength (activation 1.00), which corresponds to the input information that service = 0 out of 10.\"\n}",
+          "reason": "The explanation clearly states that the service was classified as 'poor' with full strength (activation 1.00), which corresponds to the input information that service = 0 out of 10.",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776340034,
+            "finish_reason": "stop",
+            "id": "chatcmpl-d6b0c42e-79c6-4819-aa71-f612babfe5b3",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.07591779,
+              "completion_tokens": 55,
+              "prompt_time": 0.031703003,
+              "prompt_tokens": 527,
+              "queue_time": 0.018866973,
+              "total_time": 0.107620793,
+              "total_tokens": 582
+            }
+          },
+          "section": "INPUT",
+          "trace_line": "[service, 0] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.2002290450000146,
+          "is_yes": true,
+          "line_id": "output_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (output_1 | OUTPUT):\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states the recommended tip value as '5.00 %' in the summary and multiple times in the plain-language reasoning.\"\n}",
+          "reason": "The explanation explicitly states the recommended tip value as '5.00 %' in the summary and multiple times in the plain-language reasoning.",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776340035,
+            "finish_reason": "stop",
+            "id": "chatcmpl-c778c16a-7c64-4161-9e39-cd2e6947e2b9",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.068044449,
+              "completion_tokens": 42,
+              "prompt_time": 0.029822288,
+              "prompt_tokens": 514,
+              "queue_time": 0.019277864,
+              "total_time": 0.097866737,
+              "total_tokens": 556
+            }
+          },
+          "section": "OUTPUT",
+          "trace_line": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.14867779000087467,
+          "is_yes": true,
+          "line_id": "explanation_1",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_1 | EXPLANATION):\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs food delicious?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is food delicious?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'\"\n}",
+          "reason": "The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776340035,
+            "finish_reason": "stop",
+            "id": "chatcmpl-fe87a9dc-10ab-424e-bc15-e3a04fafe566",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.047626742,
+              "completion_tokens": 40,
+              "prompt_time": 0.032047816,
+              "prompt_tokens": 503,
+              "queue_time": 0.029138342,
+              "total_time": 0.079674558,
+              "total_tokens": 543
+            }
+          },
+          "section": "EXPLANATION",
+          "trace_line": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        },
+        {
+          "answer": "yes",
+          "elapsed_seconds": 0.2604353529986838,
+          "is_yes": true,
+          "line_id": "explanation_2",
+          "messages": [
+            {
+              "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+              "role": "system"
+            },
+            {
+              "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_2 | EXPLANATION):\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs service poor?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+              "role": "user"
+            }
+          ],
+          "question": "Is service poor?",
+          "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'\"\n}",
+          "reason": "The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'",
+          "response_metadata": {
+            "choice_index": 0,
+            "created": 1776340035,
+            "finish_reason": "stop",
+            "id": "chatcmpl-6bd8227c-194b-4d24-9db7-8ac5eb064168",
+            "model": "llama-3.1-8b-instant",
+            "usage": {
+              "completion_time": 0.051691706,
+              "completion_tokens": 40,
+              "prompt_time": 0.053881415,
+              "prompt_tokens": 503,
+              "queue_time": 0.024951962,
+              "total_time": 0.105573121,
+              "total_tokens": 543
+            }
+          },
+          "section": "EXPLANATION",
+          "trace_line": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        }
+      ],
+      "status": "success",
+      "total_elapsed_seconds": 1.2258535279979696,
+      "yes_count": 5
+    },
+    "metric_name": "trace_coverage_faithfulness",
+    "metric_short_name": "TCF",
+    "question_generation": {
+      "elapsed_seconds": 0.2024422640006378,
+      "fixed_question_count": 3,
+      "fixed_questions": [
+        {
+          "line_id": "input_1",
+          "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?"
+        },
+        {
+          "line_id": "input_2",
+          "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?"
+        },
+        {
+          "line_id": "output_1",
+          "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?"
+        }
+      ],
+      "generated_question_count": 2,
+      "generated_questions": [
+        {
+          "line_id": "explanation_1",
+          "question": "Is food delicious?"
+        },
+        {
+          "line_id": "explanation_2",
+          "question": "Is service poor?"
+        }
+      ],
+      "messages": [
+        {
+          "content": "You generate yes/no Trace Coverage Faithfulness (TCF) questions from reduced fuzzy execution traces. Return strict JSON only.",
+          "role": "system"
+        },
+        {
+          "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic trace facts:\n- explanation_1 | EXPLANATION | (food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n- explanation_2 | EXPLANATION | (service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nTask:\n- Create exactly one yes/no question for each listed trace fact.\n- Keep each question focused on the core information in that fact.\n- These remaining facts are all from the EXPLANATION section.\n- Use the exact linguistic label from the fact as the basis of the question.\n- Do not replace one label with a different label from the rulebase.\n- A question may allow equivalent wording, but it must preserve the original trace meaning.\n- Do not require the explanation to repeat activation values, domains, or formatting.\n- The question must be answerable by checking whether the explanation communicates that fact.\n\nReturn JSON with this shape:\n{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Does the explanation say ...?\"}\n  ]\n}\nUse every provided line_id exactly once and do not add extra fields.",
+          "role": "user"
+        }
+      ],
+      "normalized_generated_questions_sha256": "d7a232c106926468f5c4942691b5981028247b5a18d53717b64fa5a0a574490e",
+      "question_count": 5,
+      "questions": [
+        {
+          "line_id": "input_1",
+          "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?"
+        },
+        {
+          "line_id": "input_2",
+          "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?"
+        },
+        {
+          "line_id": "output_1",
+          "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?"
+        },
+        {
+          "line_id": "explanation_1",
+          "question": "Is food delicious?"
+        },
+        {
+          "line_id": "explanation_2",
+          "question": "Is service poor?"
+        }
+      ],
+      "response_metadata": {
+        "choice_index": 0,
+        "created": 1776340034,
+        "finish_reason": "stop",
+        "id": "chatcmpl-7b328eb7-69ae-476b-9f20-24a0f33be8ca",
+        "model": "llama-3.1-8b-instant",
+        "usage": {
+          "completion_time": 0.053067029,
+          "completion_tokens": 50,
+          "prompt_time": 0.028346437,
+          "prompt_tokens": 405,
+          "queue_time": 0.0177029,
+          "total_time": 0.081413466,
+          "total_tokens": 455
+        }
+      },
+      "response_sha256": "bd675e9ca05deba4193902253d6561511adebaf2437d613687cb93d1f85fe416",
+      "response_text": "{\n  \"questions\": [\n    {\"line_id\": \"explanation_1\", \"question\": \"Is food delicious?\"},\n    {\"line_id\": \"explanation_2\", \"question\": \"Is service poor?\"}\n  ]\n}",
+      "status": "success"
+    },
+    "score": 1.0,
+    "status": "success",
+    "timestamp_utc": "2026-04-16T11:47:14.332375+00:00",
+    "total_questions": 5,
+    "trace_fact_count": 5,
+    "trace_facts": [
+      {
+        "line_id": "input_1",
+        "section": "INPUT",
+        "text": "[food, 10] ; Definition Domain : [0 ; 10]"
+      },
+      {
+        "line_id": "input_2",
+        "section": "INPUT",
+        "text": "[service, 0] ; Definition Domain : [0 ; 10]"
+      },
+      {
+        "line_id": "output_1",
+        "section": "OUTPUT",
+        "text": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+      },
+      {
+        "line_id": "explanation_1",
+        "section": "EXPLANATION",
+        "text": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+      },
+      {
+        "line_id": "explanation_2",
+        "section": "EXPLANATION",
+        "text": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+      }
+    ],
+    "trace_sha256": "3aae5174f8fb1bd2c514d558bd208521f89fd8655bf3dcc7d0d9b587403c8401",
+    "yes_count": 5
+  },
+  "evaluations": [
+    {
+      "backend": {
+        "api_key_env": "GROQ_API_KEY",
+        "api_key_logged": false,
+        "base_url": "https://api.groq.com/openai/v1",
+        "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+        "name": "groq"
+      },
+      "framework_version": "0.1.0",
+      "generation_parameters": {
+        "answer_max_tokens": 200,
+        "model": "llama-3.1-8b-instant",
+        "question_max_tokens": 500,
+        "temperature": 0.0,
+        "timeout_seconds": 120,
+        "top_p": 1.0
+      },
+      "judge": {
+        "no_count": 0,
+        "results": [
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.2046071539989498,
+            "is_yes": true,
+            "line_id": "input_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_1 | INPUT):\n[food, 10] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that 'food quality was classified as “delicious” with full strength (activation 1.00)', which implies that the food received a perfect score of 10 out of 10.\"\n}",
+            "reason": "The explanation clearly states that 'food quality was classified as “delicious” with full strength (activation 1.00)', which implies that the food received a perfect score of 10 out of 10.",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776340034,
+              "finish_reason": "stop",
+              "id": "chatcmpl-ea73db2c-db2d-4ec7-8068-dc35a63b1b72",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.071001625,
+                "completion_tokens": 57,
+                "prompt_time": 0.030320447,
+                "prompt_tokens": 527,
+                "queue_time": 0.019859525,
+                "total_time": 0.101322072,
+                "total_tokens": 584
+              }
+            },
+            "section": "INPUT",
+            "trace_line": "[food, 10] ; Definition Domain : [0 ; 10]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.20946192199880898,
+            "is_yes": true,
+            "line_id": "input_2",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_2 | INPUT):\n[service, 0] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that the service was classified as 'poor' with full strength (activation 1.00), which corresponds to the input information that service = 0 out of 10.\"\n}",
+            "reason": "The explanation clearly states that the service was classified as 'poor' with full strength (activation 1.00), which corresponds to the input information that service = 0 out of 10.",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776340034,
+              "finish_reason": "stop",
+              "id": "chatcmpl-d6b0c42e-79c6-4819-aa71-f612babfe5b3",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.07591779,
+                "completion_tokens": 55,
+                "prompt_time": 0.031703003,
+                "prompt_tokens": 527,
+                "queue_time": 0.018866973,
+                "total_time": 0.107620793,
+                "total_tokens": 582
+              }
+            },
+            "section": "INPUT",
+            "trace_line": "[service, 0] ; Definition Domain : [0 ; 10]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.2002290450000146,
+            "is_yes": true,
+            "line_id": "output_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (output_1 | OUTPUT):\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nDoes the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states the recommended tip value as '5.00 %' in the summary and multiple times in the plain-language reasoning.\"\n}",
+            "reason": "The explanation explicitly states the recommended tip value as '5.00 %' in the summary and multiple times in the plain-language reasoning.",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776340035,
+              "finish_reason": "stop",
+              "id": "chatcmpl-c778c16a-7c64-4161-9e39-cd2e6947e2b9",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.068044449,
+                "completion_tokens": 42,
+                "prompt_time": 0.029822288,
+                "prompt_tokens": 514,
+                "queue_time": 0.019277864,
+                "total_time": 0.097866737,
+                "total_tokens": 556
+              }
+            },
+            "section": "OUTPUT",
+            "trace_line": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.14867779000087467,
+            "is_yes": true,
+            "line_id": "explanation_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_1 | EXPLANATION):\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs food delicious?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is food delicious?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'\"\n}",
+            "reason": "The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776340035,
+              "finish_reason": "stop",
+              "id": "chatcmpl-fe87a9dc-10ab-424e-bc15-e3a04fafe566",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.047626742,
+                "completion_tokens": 40,
+                "prompt_time": 0.032047816,
+                "prompt_tokens": 503,
+                "queue_time": 0.029138342,
+                "total_time": 0.079674558,
+                "total_tokens": 543
+              }
+            },
+            "section": "EXPLANATION",
+            "trace_line": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.2604353529986838,
+            "is_yes": true,
+            "line_id": "explanation_2",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. For INPUT score questions, count the answer as yes if the explanation clearly uses the underlying input information even when it describes a qualitative interpretation instead of repeating the raw number. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_2 | EXPLANATION):\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs service poor?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is service poor?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'\"\n}",
+            "reason": "The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776340035,
+              "finish_reason": "stop",
+              "id": "chatcmpl-6bd8227c-194b-4d24-9db7-8ac5eb064168",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.051691706,
+                "completion_tokens": 40,
+                "prompt_time": 0.053881415,
+                "prompt_tokens": 503,
+                "queue_time": 0.024951962,
+                "total_time": 0.105573121,
+                "total_tokens": 543
+              }
+            },
+            "section": "EXPLANATION",
+            "trace_line": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+          }
+        ],
+        "status": "success",
+        "total_elapsed_seconds": 1.2258535279979696,
+        "yes_count": 5
+      },
+      "metric_name": "trace_coverage_faithfulness",
+      "metric_short_name": "TCF",
+      "question_generation": {
+        "elapsed_seconds": 0.2024422640006378,
+        "fixed_question_count": 3,
+        "fixed_questions": [
+          {
+            "line_id": "input_1",
+            "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?"
+          },
+          {
+            "line_id": "input_2",
+            "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?"
+          },
+          {
+            "line_id": "output_1",
+            "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?"
+          }
+        ],
+        "generated_question_count": 2,
+        "generated_questions": [
+          {
+            "line_id": "explanation_1",
+            "question": "Is food delicious?"
+          },
+          {
+            "line_id": "explanation_2",
+            "question": "Is service poor?"
+          }
+        ],
+        "messages": [
+          {
+            "content": "You generate yes/no Trace Coverage Faithfulness (TCF) questions from reduced fuzzy execution traces. Return strict JSON only.",
+            "role": "system"
+          },
+          {
+            "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic trace facts:\n- explanation_1 | EXPLANATION | (food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n- explanation_2 | EXPLANATION | (service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nTask:\n- Create exactly one yes/no question for each listed trace fact.\n- Keep each question focused on the core information in that fact.\n- These remaining facts are all from the EXPLANATION section.\n- Use the exact linguistic label from the fact as the basis of the question.\n- Do not replace one label with a different label from the rulebase.\n- A question may allow equivalent wording, but it must preserve the original trace meaning.\n- Do not require the explanation to repeat activation values, domains, or formatting.\n- The question must be answerable by checking whether the explanation communicates that fact.\n\nReturn JSON with this shape:\n{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Does the explanation say ...?\"}\n  ]\n}\nUse every provided line_id exactly once and do not add extra fields.",
+            "role": "user"
+          }
+        ],
+        "normalized_generated_questions_sha256": "d7a232c106926468f5c4942691b5981028247b5a18d53717b64fa5a0a574490e",
+        "question_count": 5,
+        "questions": [
+          {
+            "line_id": "input_1",
+            "question": "Does the explanation use the food input information from the trace (food = 10 out of 10), either by stating the score or by clearly describing the corresponding food quality?"
+          },
+          {
+            "line_id": "input_2",
+            "question": "Does the explanation use the service input information from the trace (service = 0 out of 10), either by stating the score or by clearly describing the corresponding service quality?"
+          },
+          {
+            "line_id": "output_1",
+            "question": "Does the explanation state or clearly communicate the recommended tip value from the trace (tip = 5)?"
+          },
+          {
+            "line_id": "explanation_1",
+            "question": "Is food delicious?"
+          },
+          {
+            "line_id": "explanation_2",
+            "question": "Is service poor?"
+          }
+        ],
+        "response_metadata": {
+          "choice_index": 0,
+          "created": 1776340034,
+          "finish_reason": "stop",
+          "id": "chatcmpl-7b328eb7-69ae-476b-9f20-24a0f33be8ca",
+          "model": "llama-3.1-8b-instant",
+          "usage": {
+            "completion_time": 0.053067029,
+            "completion_tokens": 50,
+            "prompt_time": 0.028346437,
+            "prompt_tokens": 405,
+            "queue_time": 0.0177029,
+            "total_time": 0.081413466,
+            "total_tokens": 455
+          }
+        },
+        "response_sha256": "bd675e9ca05deba4193902253d6561511adebaf2437d613687cb93d1f85fe416",
+        "response_text": "{\n  \"questions\": [\n    {\"line_id\": \"explanation_1\", \"question\": \"Is food delicious?\"},\n    {\"line_id\": \"explanation_2\", \"question\": \"Is service poor?\"}\n  ]\n}",
+        "status": "success"
+      },
+      "score": 1.0,
+      "status": "success",
+      "timestamp_utc": "2026-04-16T11:47:14.332375+00:00",
+      "total_questions": 5,
+      "trace_fact_count": 5,
+      "trace_facts": [
+        {
+          "line_id": "input_1",
+          "section": "INPUT",
+          "text": "[food, 10] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "line_id": "input_2",
+          "section": "INPUT",
+          "text": "[service, 0] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "line_id": "output_1",
+          "section": "OUTPUT",
+          "text": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+        },
+        {
+          "line_id": "explanation_1",
+          "section": "EXPLANATION",
+          "text": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        },
+        {
+          "line_id": "explanation_2",
+          "section": "EXPLANATION",
+          "text": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        }
+      ],
+      "trace_sha256": "3aae5174f8fb1bd2c514d558bd208521f89fd8655bf3dcc7d0d9b587403c8401",
+      "yes_count": 5
+    },
+    {
+      "backend": {
+        "api_key_env": "GROQ_API_KEY",
+        "api_key_logged": false,
+        "base_url": "https://api.groq.com/openai/v1",
+        "chat_completions_url": "https://api.groq.com/openai/v1/chat/completions",
+        "name": "groq"
+      },
+      "framework_version": "0.1.0",
+      "generation_parameters": {
+        "answer_max_tokens": 200,
+        "model": "llama-3.1-8b-instant",
+        "question_max_tokens": 500,
+        "temperature": 0.0,
+        "timeout_seconds": 120,
+        "top_p": 1.0
+      },
+      "judge": {
+        "no_count": 0,
+        "results": [
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.30709562099946197,
+            "is_yes": true,
+            "line_id": "input_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_1 | INPUT):\n[food, 10] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs the food value 10?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is the food value 10?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states that 'Food quality was classified as “delicious” with full strength (activation 1.00)', which directly implies that the food value is 10, the highest possible value in its domain.\"\n}",
+            "reason": "The explanation explicitly states that 'Food quality was classified as “delicious” with full strength (activation 1.00)', which directly implies that the food value is 10, the highest possible value in its domain.",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776338263,
+              "finish_reason": "stop",
+              "id": "chatcmpl-29f5f1a3-0791-4e73-9447-69754f548faf",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.079495795,
+                "completion_tokens": 59,
+                "prompt_time": 0.025661413,
+                "prompt_tokens": 466,
+                "queue_time": 0.019955559,
+                "total_time": 0.105157208,
+                "total_tokens": 525
+              }
+            },
+            "section": "INPUT",
+            "trace_line": "[food, 10] ; Definition Domain : [0 ; 10]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.20437308299915458,
+            "is_yes": true,
+            "line_id": "input_2",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (input_2 | INPUT):\n[service, 0] ; Definition Domain : [0 ; 10]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs the service value 0?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is the service value 0?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.'\"\n}",
+            "reason": "The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.'",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776338263,
+              "finish_reason": "stop",
+              "id": "chatcmpl-7d155009-1fa3-47f7-9564-bc393ec71154",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.076602477,
+                "completion_tokens": 48,
+                "prompt_time": 0.031080606,
+                "prompt_tokens": 466,
+                "queue_time": 0.044595435,
+                "total_time": 0.107683083,
+                "total_tokens": 514
+              }
+            },
+            "section": "INPUT",
+            "trace_line": "[service, 0] ; Definition Domain : [0 ; 10]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.5118935669997882,
+            "is_yes": true,
+            "line_id": "output_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (output_1 | OUTPUT):\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs the tip value 5?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is the tip value 5?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation clearly states that the system recommends a 5.00 % tip, directly answering the question about the tip value.\"\n}",
+            "reason": "The explanation clearly states that the system recommends a 5.00 % tip, directly answering the question about the tip value.",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776338263,
+              "finish_reason": "stop",
+              "id": "chatcmpl-ae721b23-b64f-47c9-9b6a-6728be0b41ae",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.04318852,
+                "completion_tokens": 40,
+                "prompt_time": 0.033828098,
+                "prompt_tokens": 468,
+                "queue_time": 0.044960898,
+                "total_time": 0.077016618,
+                "total_tokens": 508
+              }
+            },
+            "section": "OUTPUT",
+            "trace_line": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.2047340669996629,
+            "is_yes": true,
+            "line_id": "explanation_1",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_1 | EXPLANATION):\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs the food described as delicious?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is the food described as delicious?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'\"\n}",
+            "reason": "The explanation explicitly states 'Food quality was classified as “delicious” with full strength (activation 1.00)'",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776338264,
+              "finish_reason": "stop",
+              "id": "chatcmpl-6a624b79-8432-4f6e-95e4-de0b712b9ecc",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.042838484,
+                "completion_tokens": 40,
+                "prompt_time": 0.029603671,
+                "prompt_tokens": 473,
+                "queue_time": 0.01796767,
+                "total_time": 0.072442155,
+                "total_tokens": 513
+              }
+            },
+            "section": "EXPLANATION",
+            "trace_line": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+          },
+          {
+            "answer": "yes",
+            "elapsed_seconds": 0.31199013700097566,
+            "is_yes": true,
+            "line_id": "explanation_2",
+            "messages": [
+              {
+                "content": "You are a strict TCF judge. Decide whether a generated explanation includes the core information asked by a yes/no question. Paraphrases count as present. Exact activation values, domains, and formatting are not required unless the explanation contradicts the core fact. Return strict JSON only.",
+                "role": "system"
+              },
+              {
+                "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic fact (explanation_2 | EXPLANATION):\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nGenerated explanation:\n**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding.\n\nQuestion:\nIs the service described as poor?\n\nReturn JSON with this shape:\n{\n  \"answer\": \"yes\" or \"no\",\n  \"reason\": \"short justification\"\n}\nAnswer yes only if the explanation clearly communicates the core information needed by the question.",
+                "role": "user"
+              }
+            ],
+            "question": "Is the service described as poor?",
+            "raw_response_text": "{\n  \"answer\": \"yes\",\n  \"reason\": \"The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'\"\n}",
+            "reason": "The explanation explicitly states 'service was classified as “poor,” also with full strength (activation 1.00)'",
+            "response_metadata": {
+              "choice_index": 0,
+              "created": 1776338264,
+              "finish_reason": "stop",
+              "id": "chatcmpl-e9212a56-d692-4f53-b92f-7540e6d21c87",
+              "model": "llama-3.1-8b-instant",
+              "usage": {
+                "completion_time": 0.053316842,
+                "completion_tokens": 40,
+                "prompt_time": 0.031092747,
+                "prompt_tokens": 473,
+                "queue_time": 0.044703539,
+                "total_time": 0.084409589,
+                "total_tokens": 513
+              }
+            },
+            "section": "EXPLANATION",
+            "trace_line": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+          }
+        ],
+        "status": "success",
+        "total_elapsed_seconds": 1.8453766549991997,
+        "yes_count": 5
+      },
+      "metric_name": "trace_coverage_faithfulness",
+      "metric_short_name": "TCF",
+      "question_generation": {
+        "elapsed_seconds": 0.3052901800001564,
+        "messages": [
+          {
+            "content": "You generate yes/no Trace Coverage Faithfulness (TCF) questions from reduced fuzzy execution traces. Return strict JSON only.",
+            "role": "system"
+          },
+          {
+            "content": "Reduced trace:\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nAtomic trace facts:\n- input_1 | INPUT | [food, 10] ; Definition Domain : [0 ; 10]\n- input_2 | INPUT | [service, 0] ; Definition Domain : [0 ; 10]\n- output_1 | OUTPUT | (tip, 5) ; Definition Domain : [0 % ; 30 %]\n- explanation_1 | EXPLANATION | (food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n- explanation_2 | EXPLANATION | (service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]\n\nTask:\n- Create exactly one yes/no question for each listed trace fact.\n- Keep each question focused on the core information in that fact.\n- For INPUT and OUTPUT facts, ask about the variable value.\n- For EXPLANATION facts, ask about the linguistic label or condition.\n- Do not require the explanation to repeat activation values, domains, or formatting.\n- The question must be answerable by checking whether the explanation communicates that fact.\n\nReturn JSON with this shape:\n{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Does the explanation say ...?\"}\n  ]\n}\nUse every provided line_id exactly once and do not add extra fields.",
+            "role": "user"
+          }
+        ],
+        "normalized_questions_sha256": "458dc607f586bd1cae65a6996e682bb0bb6e8932689769fa5edbf5be3bbec8c0",
+        "question_count": 5,
+        "questions": [
+          {
+            "line_id": "input_1",
+            "question": "Is the food value 10?"
+          },
+          {
+            "line_id": "input_2",
+            "question": "Is the service value 0?"
+          },
+          {
+            "line_id": "output_1",
+            "question": "Is the tip value 5?"
+          },
+          {
+            "line_id": "explanation_1",
+            "question": "Is the food described as delicious?"
+          },
+          {
+            "line_id": "explanation_2",
+            "question": "Is the service described as poor?"
+          }
+        ],
+        "response_metadata": {
+          "choice_index": 0,
+          "created": 1776338262,
+          "finish_reason": "stop",
+          "id": "chatcmpl-a4cd2a9c-3090-4ae8-8632-be846d7312ec",
+          "model": "llama-3.1-8b-instant",
+          "usage": {
+            "completion_time": 0.117547096,
+            "completion_tokens": 122,
+            "prompt_time": 0.025464793,
+            "prompt_tokens": 443,
+            "queue_time": 0.017714429,
+            "total_time": 0.143011889,
+            "total_tokens": 565
+          }
+        },
+        "response_sha256": "85559db10699326f88cca698570b7a51f8f7ea0a58c7bcb9d2853128209bf231",
+        "response_text": "{\n  \"questions\": [\n    {\"line_id\": \"input_1\", \"question\": \"Is the food value 10?\"},\n    {\"line_id\": \"input_2\", \"question\": \"Is the service value 0?\"},\n    {\"line_id\": \"output_1\", \"question\": \"Is the tip value 5?\"},\n    {\"line_id\": \"explanation_1\", \"question\": \"Is the food described as delicious?\"},\n    {\"line_id\": \"explanation_2\", \"question\": \"Is the service described as poor?\"}\n  ]\n}",
+        "status": "success"
+      },
+      "score": 1.0,
+      "status": "success",
+      "timestamp_utc": "2026-04-16T11:17:42.684340+00:00",
+      "total_questions": 5,
+      "trace_fact_count": 5,
+      "trace_facts": [
+        {
+          "line_id": "input_1",
+          "section": "INPUT",
+          "text": "[food, 10] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "line_id": "input_2",
+          "section": "INPUT",
+          "text": "[service, 0] ; Definition Domain : [0 ; 10]"
+        },
+        {
+          "line_id": "output_1",
+          "section": "OUTPUT",
+          "text": "(tip, 5) ; Definition Domain : [0 % ; 30 %]"
+        },
+        {
+          "line_id": "explanation_1",
+          "section": "EXPLANATION",
+          "text": "(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        },
+        {
+          "line_id": "explanation_2",
+          "section": "EXPLANATION",
+          "text": "(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]"
+        }
+      ],
+      "trace_sha256": "3aae5174f8fb1bd2c514d558bd208521f89fd8655bf3dcc7d0d9b587403c8401",
+      "yes_count": 5
+    }
+  ],
+  "examples": {
+    "count": 3,
+    "ids": [
+      "heitor2_food0_service0",
+      "heitor2_food5_service5",
+      "heitor2_food10_service10"
+    ],
+    "sha256": "7dae250245775fb41f34bd33332948afb17052b88fdceee52afacdfd3aeecb49",
+    "source": "builtin"
+  },
+  "experiment_id": "973c8d7d-a652-43b2-931a-30ce007b7375",
+  "framework_version": "0.1.0",
+  "generation_parameters": {
+    "max_tokens": 2000,
+    "model": "o3",
+    "temperature": 0.0,
+    "timeout_seconds": 120,
+    "top_p": 1.0
+  },
+  "metrics": {
+    "active_proposition_count": 2,
+    "example_count": 3,
+    "generation_time_seconds": 4.599472062007408,
+    "output_char_count": 929,
+    "output_word_count": 132,
+    "prompt_char_count": 3622,
+    "prompt_message_count": 8,
+    "rulebase_rule_count": 0,
+    "tcf_evaluation_count": 2,
+    "tcf_score": 1.0,
+    "tcf_total_questions": 5,
+    "tcf_yes_count": 5,
+    "trace_char_count": 326,
+    "usage": {
+      "completion_tokens": 266,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": 0,
+        "audio_tokens": 0,
+        "reasoning_tokens": 64,
+        "rejected_prediction_tokens": 0
+      },
+      "prompt_tokens": 1002,
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cached_tokens": 0
+      },
+      "total_tokens": 1268
+    }
+  },
+  "mode": "3-shot+trace",
+  "mode_description": "Given the generated explanations, we add 3-shot prompting; that is, we provide examples to the LLM to constrain its responses. This consists of playing the role of a user and the role of the LLM to indicate which interactions should take place.",
+  "output": {
+    "metrics": {
+      "char_count": 929,
+      "line_count": 8,
+      "word_count": 132
+    },
+    "response_metadata": {
+      "choice_index": 0,
+      "created": 1775806119,
+      "finish_reason": "stop",
+      "id": "chatcmpl-DT0a75pI2IPqalL2CZxL5Tk7MaL5M",
+      "model": "o3-2025-04-16",
+      "usage": {
+        "completion_tokens": 266,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 64,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 1002,
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 1268
+      }
+    },
+    "text": "**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**  \n- Food quality was classified as “delicious” with full strength (activation 1.00), signalling the highest possible appreciation for the meal itself.  \n- Service, however, was classified as “poor,” also with full strength (activation 1.00), indicating the lowest possible quality of service.  \n- The coexistence of an excellent dish and very unsatisfactory service creates a mixed scenario; the negative service label dominates the rule set that influences tipping.  \n- Because the rules give strong weight to service courtesy and attentiveness, the fully activated “poor” label drives the recommendation downward despite the superb food.  \n- Balancing these opposing influences, the system settles on the minimum suggested gratuity of 5.00 %, reflecting disappointment with the service while still acknowledging that the food itself was outstanding."
+  },
+  "prompt": {
+    "char_count": 3622,
+    "instructions_sha256": "60ba994bbacba51e0ed280aa7e93547773a6cbaa6d2d2f0e7a395dcceac91dfd",
+    "instructions_source": "builtin",
+    "message_count": 8,
+    "messages": [
+      {
+        "content": "**Role**\nYou are **Fuzzy Explainer**, an assistant whose task is to convert an execution trace from a fuzzy-logic inference system into a clear explanation for a non-specialist reader.\n\n**Input Provided**\nThe trace always follows this structure:\n\n<=== INPUT ===>\n[variable, value] ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n<=== OUTPUT ===>\n(variable_out, defuzzified_value) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n<=== EXPLANATION ===>\n(linguistic-label 1, Activation Value: X) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n(linguistic-label 2, Activation Value: Y) ; Definition Domain : [min unit(optional) ; max unit(optional)]\n...\n\nThe explanation section lists activated fuzzy labels for the input variables, not full if-then rules.\n\nAll necessary data are contained in the trace; do **NOT** invent information.\n\n**Goal - Produce an English explanation containing:**\n1. **Summary** (1 sentence) - the main conclusion, e.g. \"The system recommends a 10 % tip.\"\n2. **Plain-language reasoning** (<= 150 words) - why the algorithm reached this value, linking each activated label to its activation value.\n\n**Style Constraints**\n- Clear, educational English; avoid unnecessary mathematical jargon.\n- Round all numeric values to two decimal places.\n- Use bullet points where they improve readability.\n- Total length <= 300 words.",
+        "role": "system"
+      },
+      {
+        "content": "Example trace:\n\n<=== INPUT ===>\n[food, 0] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is rancid, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      },
+      {
+        "content": "**Summary** The system recommends a 5.00 % tip.\n\n**Plain-language reasoning**\n- The trace activates \"food is rancid\" and \"service is poor\" at 1.00.\n- These labels describe a clearly negative dining experience.\n- That leads the system to a low tip recommendation of 5.00 %.",
+        "role": "assistant"
+      },
+      {
+        "content": "Example trace:\n\n<=== INPUT ===>\n[food, 5] ; Definition Domain : [0 ; 10]\n[service, 5] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 15) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is okay, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is good, Activation Value: 1) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      },
+      {
+        "content": "**Summary** The system recommends a 15.00 % tip.\n\n**Plain-language reasoning**\n- The trace activates \"food is okay\" at 1.00 and \"service is good\" at 1.00.\n- These labels describe a solid but not exceptional experience.\n- That leads the system to an average tip recommendation of 15.00 %.",
+        "role": "assistant"
+      },
+      {
+        "content": "Example trace:\n\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 10] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 25) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is excellent, Activation Value: 1) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      },
+      {
+        "content": "**Summary** The system recommends a 25.00 % tip.\n\n**Plain-language reasoning**\n- The trace activates \"food is delicious\" at 1.00 and \"service is excellent\" at 1.00.\n- These labels describe the strongest positive case in the system.\n- That leads the system to a generous tip recommendation of 25.00 %.",
+        "role": "assistant"
+      },
+      {
+        "content": "Trace to explain:\n\n<=== INPUT ===>\n[food, 10] ; Definition Domain : [0 ; 10]\n[service, 0] ; Definition Domain : [0 ; 10]\n\n<=== OUTPUT ===>\n(tip, 5) ; Definition Domain : [0 % ; 30 %]\n\n<=== EXPLANATION ===>\n(food is delicious, Activation Value: 1) ; Definition Domain : [0 ; 1]\n(service is poor, Activation Value: 1) ; Definition Domain : [0 ; 1]",
+        "role": "user"
+      }
+    ]
+  },
+  "rulebase": {
+    "method": null,
+    "rule_count": 0,
+    "source": null
+  },
+  "runtime": {
+    "cwd": "/home/baunilha/Repositories/xai-playground",
+    "git": {
+      "branch": "main",
+      "commit": "2b0f9826b810126b1dad368c433ffdf08f6ca640",
+      "status_short": "M README.md\n M xai_experiments/backends.py\n M xai_experiments/cli.py\n?? run_representative_experiments.sh"
+    },
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]"
+  },
+  "schema_version": "xai-tip-explanation-run/v1",
+  "status": "success",
+  "timestamp_utc": "2026-04-10T07:28:34.699222+00:00",
+  "trace": {
+    "format": "activated_labels",
+    "formatted_char_count": 326,
+    "formatted_sha256": "3aae5174f8fb1bd2c514d558bd208521f89fd8655bf3dcc7d0d9b587403c8401",
+    "path": "traces/heitor2/tip_trace_food10_service0.json",
+    "path_convention": "traces/<model_name>/tip_trace_food<foodScore>_service<serviceScore>.json",
+    "path_metadata": {
+      "food_score": 10,
+      "model_name": "heitor2",
+      "service_score": 0
+    },
+    "sha256": "971c0a3b6428c4ff3decc7a576b1d3e80695e9e0e3686fce74759b24e42d60fe",
+    "summary": {
+      "active_proposition_count": 2,
+      "active_rule_count": 1,
+      "inputs": {
+        "food": "10",
+        "service": "0"
+      },
+      "outputs": {
+        "tip": {
+          "confidence": "1",
+          "value": "5"
+        }
+      },
+      "proposition_count": 6,
+      "rule_count": 4
+    }
+  },
+  "trace_variant": "activated_labels"
+}
