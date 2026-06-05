@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from pathlib import Path
+import random
 
 import streamlit as st
 
@@ -44,6 +45,11 @@ parse_trace_nodes = data_module.parse_trace_nodes
 prompt_messages = data_module.prompt_messages
 select_main_parameters = data_module.select_main_parameters
 
+STARTUP_PREFERRED_MODEL = "o3"
+STARTUP_PREFERRED_MODE = "3-shot+(trace with model rulebase)"
+STARTUP_SUCCESS_STATUS = "success"
+STARTUP_RANDOM_FALLBACK_KEY = "startup_random_successful_experiment_path"
+
 
 st.set_page_config(
     page_title="Experiment Viewer",
@@ -77,6 +83,75 @@ def main() -> None:
     render_main(selected, full_trace, trace_details, rulebase_resources)
 
 
+def startup_experiment_path(experiments: list[ExperimentRecord]) -> str | None:
+    preferred_path = latest_preferred_startup_experiment_path(experiments)
+    if preferred_path:
+        return preferred_path
+
+    successful_paths = {
+        str(record.path)
+        for record in experiments
+        if record.status == STARTUP_SUCCESS_STATUS
+    }
+    fallback_path = st.session_state.get(STARTUP_RANDOM_FALLBACK_KEY)
+    if isinstance(fallback_path, str) and fallback_path in successful_paths:
+        return fallback_path
+
+    fallback_path = random_successful_experiment_path(experiments)
+    if fallback_path:
+        st.session_state[STARTUP_RANDOM_FALLBACK_KEY] = fallback_path
+    return fallback_path
+
+
+def latest_preferred_startup_experiment_path(
+    experiments: list[ExperimentRecord],
+) -> str | None:
+    preferred_records = [
+        record
+        for record in experiments
+        if is_preferred_startup_record(record)
+    ]
+    if not preferred_records:
+        return None
+
+    selected = max(
+        preferred_records,
+        key=lambda record: (record.timestamp, str(record.path)),
+    )
+    return str(selected.path)
+
+
+def random_successful_experiment_path(
+    experiments: list[ExperimentRecord],
+    random_choice=random.choice,
+) -> str | None:
+    successful_records = [
+        record
+        for record in experiments
+        if record.status == STARTUP_SUCCESS_STATUS
+    ]
+    if not successful_records:
+        return None
+    return str(random_choice(successful_records).path)
+
+
+def is_preferred_startup_record(record: ExperimentRecord) -> bool:
+    return (
+        record.status == STARTUP_SUCCESS_STATUS
+        and record.model == STARTUP_PREFERRED_MODEL
+        and record.mode == STARTUP_PREFERRED_MODE
+    )
+
+
+def option_index(options: list[str], value: str | None, default: int = 0) -> int:
+    if value is None:
+        return default
+    try:
+        return options.index(value)
+    except ValueError:
+        return default
+
+
 def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | None:
     with st.sidebar:
         header_cols = st.columns([0.72, 0.28])
@@ -84,6 +159,10 @@ def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | No
         if header_cols[1].button("Refresh", key="refresh_sidebar_filters"):
             st.rerun()
 
+        records_by_path = {
+            str(record.path): record
+            for record in experiments
+        }
         rulebase_names = {
             record.path: (extract_rulebase_name(record) or "Unavailable")
             for record in experiments
@@ -110,9 +189,43 @@ def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | No
             key=lambda value: float(value),
         )
 
-        mode_filter = st.selectbox("Mode", options=mode_options, index=0)
-        status_filter = st.selectbox("Status", options=status_options, index=0)
-        model_filter = st.selectbox("Model", options=model_options, index=0)
+        startup_path = startup_experiment_path(experiments)
+        startup_record = records_by_path.get(startup_path) if startup_path else None
+        startup_matches_preferred = (
+            startup_record is not None and is_preferred_startup_record(startup_record)
+        )
+        default_status_filter = (
+            STARTUP_SUCCESS_STATUS
+            if startup_record is not None
+            and startup_record.status == STARTUP_SUCCESS_STATUS
+            else "All"
+        )
+        default_mode_filter = (
+            STARTUP_PREFERRED_MODE
+            if startup_matches_preferred
+            else "All"
+        )
+        default_model_filter = (
+            STARTUP_PREFERRED_MODEL
+            if startup_matches_preferred
+            else "All"
+        )
+
+        mode_filter = st.selectbox(
+            "Mode",
+            options=mode_options,
+            index=option_index(mode_options, default_mode_filter),
+        )
+        status_filter = st.selectbox(
+            "Status",
+            options=status_options,
+            index=option_index(status_options, default_status_filter),
+        )
+        model_filter = st.selectbox(
+            "Model",
+            options=model_options,
+            index=option_index(model_options, default_model_filter),
+        )
         rulebase_filter = st.selectbox("Rulebase", options=rulebase_options, index=0)
         from_date_filter = None
         include_all_history = True
@@ -219,9 +332,11 @@ def render_sidebar(experiments: list[ExperimentRecord]) -> ExperimentRecord | No
             )
             for record in filtered
         }
+        experiment_paths = [str(record.path) for record in filtered]
         selected_path = st.selectbox(
             "Experiment",
-            options=[str(record.path) for record in filtered],
+            options=experiment_paths,
+            index=option_index(experiment_paths, startup_path),
             format_func=lambda value: experiment_labels[value],
         )
         selected = next(record for record in filtered if str(record.path) == selected_path)
