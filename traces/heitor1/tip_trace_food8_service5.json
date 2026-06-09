@@ -1,0 +1,87 @@
+[
+  {
+    "nodeType": "ExpressIF.Inference.LogicalInput`1[System.Double]",
+    "string": "food",
+    "value": "8"
+  },
+  {
+    "nodeType": "ExpressIF.Inference.LogicalInput`1[System.Double]",
+    "string": "service",
+    "value": "5"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "food is rancid",
+    "value": "0"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "service is good",
+    "value": "1"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "food is delicious",
+    "value": "0.5"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "food is okay",
+    "value": "0"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "service is poor",
+    "value": "0"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.FuzzyProposition",
+    "string": "service is excellent",
+    "value": "0"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.OrExpression`3[ExpressIF.FuzzyValue,ExpressIF.FuzzyValue,ExpressIF.FuzzyValue]",
+    "string": "(service is excellent) or (food is delicious)",
+    "value": "0.5",
+    "operator": "or",
+    "operand1": "service is excellent",
+    "operand2": "food is delicious"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.OrExpression`3[ExpressIF.FuzzyValue,ExpressIF.FuzzyValue,ExpressIF.FuzzyValue]",
+    "string": "(service is good) or (food is okay)",
+    "value": "1",
+    "operator": "or",
+    "operand1": "service is good",
+    "operand2": "food is okay"
+  },
+  {
+    "nodeType": "ExpressIF.Expressions.OrExpression`3[ExpressIF.FuzzyValue,ExpressIF.FuzzyValue,ExpressIF.FuzzyValue]",
+    "string": "(service is poor) or (food is rancid)",
+    "value": "0",
+    "operator": "or",
+    "operand1": "service is poor",
+    "operand2": "food is rancid"
+  },
+  {
+    "nodeType": "ExpressIF.Inference.Mamdani.MamdaniRule`1[ExpressIF.FuzzyValue]",
+    "string": "if (service is good) or (food is okay) then tip is average",
+    "value": "1"
+  },
+  {
+    "nodeType": "ExpressIF.Inference.Mamdani.MamdaniRule`1[ExpressIF.FuzzyValue]",
+    "string": "if (service is poor) or (food is rancid) then tip is cheap",
+    "value": "0"
+  },
+  {
+    "nodeType": "ExpressIF.Inference.Mamdani.MamdaniRule`1[ExpressIF.FuzzyValue]",
+    "string": "if (service is excellent) or (food is delicious) then tip is generous",
+    "value": "0.5"
+  },
+  {
+    "nodeType": "ExpressIF.Inference.LogicalOutput`1[System.Double]",
+    "string": "tip",
+    "value": "15",
+    "confidence": "1"
+  }
+]
